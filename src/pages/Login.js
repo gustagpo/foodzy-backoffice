@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { useToast, Link, Button, Flex, Input, Heading, SimpleGrid, FormControl, InputGroup, InputLeftElement, Icon, VStack, Image, HStack} from '@chakra-ui/react';
+import { useToast, Link, Button, Flex, Input, Heading, SimpleGrid, FormControl, InputGroup, InputLeftElement, Icon, VStack, Image, HStack, Text} from '@chakra-ui/react';
 import { AiOutlineIdcard, AiOutlineLock } from 'react-icons/ai';
 import Card from '../assets/card.png';
 import { useNavigate, Link as RouterLink} from 'react-router-dom';
@@ -160,9 +160,11 @@ export default function Login() {
                   </InputGroup>
                 </FormControl>
               </VStack>
-              <HStack justify="space-evenly" mt={10}>
+              <HStack justify="space-evenly" mt={10} mb={10}>
                 <Button bg='#E52A24' onClick={handleSubmit} color="white" fontSize={18} p="25px 95px" borderRadius={20} >Acessar</Button>
               </HStack>
+
+              <Text size='xl' color="#20242D" fontWeight='bold' textAlign='center'>v.1.0.0 - Todos os direitos reservados</Text>
             </Flex>
           </SimpleGrid>
         </Flex>

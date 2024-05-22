@@ -7,17 +7,14 @@ import InputMask from 'react-input-mask';
 import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { cpf } from 'cpf-cnpj-validator';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatValue } from '../../utils/format';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
 export default function EditUsers({jwt, user}) {
   const { at } = useParams();
   const [newUser, setNewUser] = useState('');
-  const [account, setAccount] = useState('');
   const [plan, setPlan] = useState('');
-  const [pixLimit, setPixLimit] = useState(0);
-  const [cardLimit, setCardLimit] = useState(0);
   const [feePix, setFeePix] = useState(0);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -31,6 +28,22 @@ export default function EditUsers({jwt, user}) {
   const [loading, setLoading] = useState(false);
   const [statusAccount, setStatusAccount] = useState(false);
   const [statusDocument, setStatusDocument] = useState(false);
+
+  const [balance, setBallance] = useState('');
+  const [account, setAccount] = useState({});
+  const [docs, setDocs] = useState([]);
+  const [config, setConfig] = useState({});
+  const [admin, setAdmin] = useState({});
+  const [users, setUsers] = useState([]);
+  const [amount, setAmount] = useState(0);
+  const [pixLimit, setPixLimit] = useState(0);
+  const [transactionLimit, setTransactionLimit] = useState(0);
+  const [cardLimit, setCardLimit] = useState(0);
+  const [pixFee, setPixFee] = useState(0);
+  const [receivePixFee, setReceivePixFee] = useState(0);
+  const [tedFee, setTedFee] = useState(0);
+  const [boletoFee, setBoletoFee] = useState(0);
+  const [planId, setPlanId] = useState(null);
 
   const toast = useToast();
   const navigation = useNavigate();
@@ -56,58 +69,138 @@ export default function EditUsers({jwt, user}) {
     setDocument(e);
   };
 
+  async function handleStatusAccount(e){
+    setLoading(true);
+
+    try{
+      const response = await api.post(`/bo/approve-account`, {
+        at: account.account_token
+      },{
+        headers: {
+          'Authorization': 'Bearer ' + jwt
+        }
+      })
+
+      if(response.data == 'APPROVED'){
+        toast({
+          title: 'Conta ativa.',
+          description: 'Alteração realizada com sucesso',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        setStatusAccount(true);
+      } else {
+        toast({
+          title: 'Conta desativada.',
+          description: 'Alteração realizada com sucesso',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        setStatusAccount(false);
+      };
+
+      console.log(e);
+      console.log(response.data);
+      setLoading(false);      
+
+    } catch (err) {
+      console.log(err.data)
+      toast({
+        title: 'Erro no cadastro.',
+        description: err.data,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+  };
+
+  async function handleStatusDocument(e){
+    setLoading(true);
+
+    try{
+      const response = await api.post(`/bo/approve-account-document`, {
+        at: account.account_token
+      },{
+        headers: {
+          'Authorization': 'Bearer ' + jwt
+        }
+      })
+
+      if(response.data == 'APPROVED'){
+        toast({
+          title: 'Documentos aprovados.',
+          description: 'Alteração realizada com sucesso',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        setStatusDocument(true);
+      } else {
+        toast({
+          title: 'Documentos pendentes.',
+          description: 'Alteração realizada com sucesso',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        setStatusDocument(false);
+      };
+
+      console.log(e);
+      console.log(response.data);
+      setLoading(false);      
+      
+    } catch (err) {
+      console.log(err.data)
+      toast({
+        title: 'Erro no cadastro.',
+        description: err.data,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
+  };
+
+  function format(val) {
+    return `$` + val;
+  };
+
+  function parse(val) {
+    if(val === '$') {
+      return
+    } else {
+      return val.replace(/^\$/, '');
+    }
+  };
+
   async function handleSubmit() {
     setLoading(true);
 
-    if(oldPassword) {
-      if(!password) {
-        toast({
-          title: 'Preenhca o campo de nova senha.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return
-      }
-      if(!confirmPassword) {
-        toast({
-          title: 'Preenhca o campo de confirmar senha.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return
-      }
-      if(password != confirmPassword) {
-        toast({
-          title: 'Senha diferente em confirmar senha',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return
-      }
-    };
-
-    const body = oldPassword ? {
-      name: name,
-      email: email,
-      cpf: document,
-      phone: phone,
-      birthday: birthday,
-      oldPassword: oldPassword,
-      password: password,
-      confirmPassword: confirmPassword
-    } : {
-      name: name,
-      email: email,
-      cpf: document,
-      phone: phone,
-      birthday: birthday,
+    const body = {
+      account_id: account.id,
+      amount: amount,
+      pix_limit: pixLimit,
+      transaction_limit: transactionLimit,
+      card_limit: cardLimit,
+      pix_fee: pixFee,
+      receive_pix_fee: receivePixFee,
+      ted_fee: tedFee,
+      boleto_fee: boletoFee,
+      plan_id: planId
     };
 
     try{
-      const response = await api.put(`/users/${newUser.id}`, body, {
+      const response = await api.post(`/bo/account-config`, body, {
         headers: {
           'Authorization': 'Bearer ' + jwt
         }
@@ -124,7 +217,6 @@ export default function EditUsers({jwt, user}) {
         });
         console.log(token);
         console.log(response.data);
-        navigation('/users');
       }
 
       setLoading(false);
@@ -144,7 +236,7 @@ export default function EditUsers({jwt, user}) {
 
   async function loadData(){
     try{      
-      const responseAccount = await api.post(`/acc/get-account`, {}, {
+      const responseAccount = await api.post(`/bo/get-account`, {}, {
         headers: { 
             'Authorization': 'Bearer ' + jwt,
             'at': at,          
@@ -152,77 +244,44 @@ export default function EditUsers({jwt, user}) {
       });
   
       if(responseAccount.data){
-        setAccount(responseAccount.data);
+        setBallance(responseAccount.data.balance);
+        setAccount(responseAccount.data.account);
+        setDocs(responseAccount.data.docs);
+        setConfig(responseAccount.data.config);
+        setAdmin(responseAccount.data.admin);
+        setUsers(responseAccount.data.users);
+        if(responseAccount.data.config){
+          setAmount(responseAccount.data.config.amount)
+          setPixLimit(responseAccount.data.config.pix_limit)
+          setTransactionLimit(responseAccount.data.config.transaction_limit)
+          setCardLimit(responseAccount.data.config.card_limit)
+          setPixFee(responseAccount.data.config.pix_fee)
+          setReceivePixFee(responseAccount.data.config.receive_pix_fee)
+          setTedFee(responseAccount.data.config.ted_fee)
+          setBoletoFee(responseAccount.data.config.boleto_fee)
+          setPlanId(responseAccount.data.config.plan_id)
+        }
+        setStatusAccount(responseAccount.data.account.status);
+        setStatusDocument(responseAccount.data.account.status_document);
       };
     } catch(err) {
-      setAccount('');
-    }
-
-    // try{
-    //   const responsePlan = await api.post('/plans', {}, {
-    //     headers: {
-    //       'Authorization': 'Bearer ' + jwt
-    //     }
-    //   });
-  
-    //   if(responsePlan.data){
-    //     setPlan(responsePlan.data.plan);
-    //     setDate(responsePlan.data.date);
-    //   };
-    // } catch(err) {
-    //   setPlan('');
-    //   setDate('');
-    // }
-  };
-
-  function handleStatusAccount(e){
-    toast({
-      title: 'Switch Conta',
-      description: `${e}`,
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    })
-    
-    setStatusAccount(e);
-    return
-  };
-
-  function handleStatusDocument(e){
-    toast({
-      title: 'Switch Documento',
-      description: `${e}`,
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    })
-    
-    setStatusDocument(e);
-    return
-  };
-
-  function handlePixLimit(e){
-    toast({
-      title: 'Switch Pix',
-      description: `${e}`,
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    })
-    
-    setPixLimit(e);
-    return
-  };
-
-  function format(val) {
-    return `$` + val;
-  };
-
-  function parse(val) {
-    if(val === '$') {
-      return
-    } else {
-      return val.replace(/^\$/, '');
+      setBallance('');
+      setAccount({});
+      setDocs([]);
+      setConfig({});
+      setAdmin({});
+      setUsers([]);
+      setAmount(0);
+      setPixLimit(0);
+      setTransactionLimit(0);
+      setCardLimit(0);
+      setPixFee(0);
+      setReceivePixFee(0);
+      setTedFee(0);
+      setBoletoFee(0);
+      setPlanId(null);
+      setStatusAccount(false);
+      setStatusDocument(false);
     }
   };
   
@@ -235,6 +294,7 @@ export default function EditUsers({jwt, user}) {
         <Box w='100%' flex='1' p='8' pt='0'>
           <Flex justify='space-between'>
             <Heading size='lg' fontWeight='normal'>Conta FX: {at}</Heading>
+            <Heading size='lg' fontWeight='normal'>Saldo: {formatValue(balance)}</Heading>
             <Link as={RouterLink} to='/clients' display="flex" algin="center">
               <Button colorScheme='blackAlpha'>Voltar</Button>
             </Link>
@@ -248,22 +308,22 @@ export default function EditUsers({jwt, user}) {
                     <b>Nome da Conta:</b> {account.name}                      
                   </Text>                   
                   <Text>
-                    <b>Nome/Razão Social:</b> {account.companyName}                      
+                    <b>Nome/Razão Social:</b> {account.company_name}                      
                   </Text>                   
                   <Text>
-                    <b>Tipo:</b> {account.personType == 'LEGAL_PERSON' ? ' Pessoa Jurídica' : 'Pessoa Física'}                      
+                    <b>Tipo:</b> {account.person_type == 'LEGAL_PERSON' ? ' Pessoa Jurídica (PJ)' : 'Pessoa Física (PF)'}                      
                   </Text>                   
                   <Text>
-                    <b>Principal Atividade:</b> {account.mainActivity}                      
+                    <b>Principal Atividade:</b> {account.main_activity}                      
                   </Text>                   
                   <Text>
                     <b>Email:</b> {account.email}                      
                   </Text>                   
                   <Text>
-                    <b>Telefone 1:</b> {account.phoneNumber1}                      
+                    <b>Telefone 1:</b> {account.phone_number_1}                      
                   </Text>                   
                   <Text>
-                    <b>Telefone 2:</b> {account.phoneNumber2}                      
+                    <b>Telefone 2:</b> {account.phone_number_2}                      
                   </Text>                   
                 </CardBody>                  
               </VStack>                
@@ -271,10 +331,16 @@ export default function EditUsers({jwt, user}) {
                 <CardBody>
                   <Text>
                     <b>Documento {account.documentType}:</b> {account.document}                      
-                  </Text>                   
-                  <Text>
-                    <b>Data de Abertura:</b> {account.documentDate}                      
-                  </Text> 
+                  </Text>
+                  { account.person_type === 'LEGAL_PERSON' ? 
+                    <Text>
+                      <b>Data de Abertura:</b> {account.document_date}                      
+                    </Text> 
+                    :
+                    <Text>
+                      <b>Data de Nascimento:</b> {account.birthday}                      
+                    </Text> 
+                  }                   
                   <Text>
                     <b>CEP:</b> {account.cep}                      
                   </Text>                   
@@ -285,7 +351,7 @@ export default function EditUsers({jwt, user}) {
                     <b>Número:</b> {account.number} 
                   </Text> 
                   <Text>
-                    <b>Complemento:</b> {account.complement} 
+                    <b>Complemento:</b> {account.complement != null ? account.complement : '' } 
                   </Text> 
                   <Text>
                     <b>Bairro:</b> {account.neighborhood} 
@@ -321,7 +387,7 @@ export default function EditUsers({jwt, user}) {
                   <Text fontWeight='bold' mb='2'>Status dos Documentos</Text>                  
                   <FormControl display='flex' alignItems='center'>
                     <Text htmlFor='status-account' mb='0'>
-                      Inativo
+                      Pendente
                     </Text>
                     <Switch 
                       id='status-account'
@@ -332,7 +398,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(e) => handleStatusDocument(e.target.checked)}
                     />
                     <Text htmlFor='status-account' mb='0'>
-                      Aprovado
+                      Aprovados
                     </Text>
                   </FormControl>         
                 </CardBody>
@@ -345,49 +411,49 @@ export default function EditUsers({jwt, user}) {
               <Heading size='lg' fontWeight='normal'>Dados do Responsável</Heading>
                 <CardBody>
                   <Text>
-                    <b>Nome:</b> {account.name}                      
+                    <b>Username:</b> {admin.username}                      
                   </Text>                   
                   <Text>
-                    <b>CPF:</b> {account.companyName}                      
+                    <b>Nome:</b> {admin.name}                      
                   </Text>                   
                   <Text>
-                    <b>Data de Nascimento:</b> {account.personType == 'LEGAL_PERSON' ? ' Pessoa Jurídica' : 'Pessoa Física'}                      
+                    <b>CPF:</b> {admin.cpf}                      
                   </Text>                   
                   <Text>
-                    <b>Principal Atividade:</b> {account.mainActivity}                      
+                    <b>Data de Nascimento:</b> {admin.birthday}                      
+                  </Text>                                     
+                  <Text>
+                    <b>Email:</b> {admin.email}                      
                   </Text>                   
                   <Text>
-                    <b>Email:</b> {account.email}                      
-                  </Text>                   
-                  <Text>
-                    <b>Telefone:</b> {account.phoneNumber1}                      
+                    <b>Telefone:</b> {admin.phone}                      
                   </Text>
                   <Text>
-                    <b>CEP:</b> {account.cep}                      
+                    <b>CEP:</b> {admin.cep}                      
                   </Text>                   
                   <Text>
-                    <b>Logadouro:</b> {account.address} 
+                    <b>Logadouro:</b> {admin.address} 
                   </Text> 
                   <Text>
-                    <b>Número:</b> {account.number} 
+                    <b>Número:</b> {admin.number} 
                   </Text> 
                   <Text>
-                    <b>Complemento:</b> {account.complement} 
+                    <b>Complemento:</b> {admin.complement} 
                   </Text> 
                   <Text>
-                    <b>Bairro:</b> {account.neighborhood} 
+                    <b>Bairro:</b> {admin.neighborhood} 
                   </Text> 
                   <Text>
-                    <b>Cidade:</b> {account.city} 
+                    <b>Cidade:</b> {admin.city} 
                   </Text> 
                   <Text>
-                    <b>Estado:</b> {account.state}                                        
+                    <b>Estado:</b> {admin.state}                                        
                   </Text>                                                       
                 </CardBody>                  
               </VStack>
             </Card>
             <Card w='100%' direction='column'>               
-              <Heading size='lg' fontWeight='normal' textAlign='center' mb='6'>Documentos Enviados</Heading>
+              <Heading size='lg' fontWeight='normal' textAlign='center' mb='6'>Documentos da Conta</Heading>
               <Accordion allowToggle w='100%'>
                 <AccordionItem>
                   <h2>
@@ -539,12 +605,28 @@ export default function EditUsers({jwt, user}) {
                 <Text htmlFor='name' mb='2'>
                   Plano de Conta
                 </Text>                  
-                <Select name='plan' id='plan' placeholder='Selecione a opção'>
-                  <option value='1' selected>Free</option>
-                </Select>                  
-              </CardBody>                  
-              <VStack>
-              </VStack>                
+                <Select name='plan' id='plan' placeholder='Selecione a opção' mb='8'>
+                  <option value='0' selected>Free</option>
+                </Select>
+                <Box>
+                  <Text htmlFor='name' mb='2'>
+                    Valor de Manutenção da Conta (mês)
+                  </Text>
+                  <NumberInput
+                    onChange={(valueString) => setAmount(parse(valueString))}
+                    value={format(amount)}
+                    precision={2}
+                    borderColor='#20242D'
+                    borderRadius={5}
+                    _placeholder={{
+                        fontSize: '18',
+                        color: '#20242D'
+                    }}
+                  >
+                    <NumberInputField />                      
+                  </NumberInput>                                                     
+                </Box>                  
+              </CardBody>                                               
               <VStack>
                 <CardBody>
                   <Box mb='2'>
@@ -574,8 +656,8 @@ export default function EditUsers({jwt, user}) {
                       Limite de transação (diário por conta)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => handlePixLimit(parse(valueString))}
-                      value={format(pixLimit)}
+                      onChange={(valueString) => setTransactionLimit(parse(valueString))}
+                      value={format(transactionLimit)}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -614,8 +696,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de entrada do PIX (%)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setFeePix(valueString)}
-                      value={feePix}
+                      onChange={(valueString) => setReceivePixFee(valueString)}
+                      value={receivePixFee}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -632,8 +714,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de saída do PIX (reais)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => handlePixLimit(parse(valueString))}
-                      value={format(pixLimit)}
+                      onChange={(valueString) => setPixFee(parse(valueString))}
+                      value={format(pixFee)}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -650,8 +732,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de saída do TED (reais)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => handlePixLimit(parse(valueString))}
-                      value={format(pixLimit)}
+                      onChange={(valueString) => setTedFee(parse(valueString))}
+                      value={format(tedFee)}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -668,8 +750,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de emissão do Boleto (reais)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => handlePixLimit(parse(valueString))}
-                      value={format(pixLimit)}
+                      onChange={(valueString) => setBoletoFee(parse(valueString))}
+                      value={format(boletoFee)}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
