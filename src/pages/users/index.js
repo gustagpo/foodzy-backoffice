@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link } from '@chakra-ui/react';
+import { Avatar, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link, Skeleton } from '@chakra-ui/react';
 import { RiAddLine, RiPencilLine } from 'react-icons/ri';
 import api from '../../services/api';
 import { formatDate } from '../../utils/format';
@@ -13,6 +13,7 @@ export default function UserList({ jwt, user }) {
     const [plan, setPlan] = useState('');
     const [date, setDate] = useState('');
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const STATUS_PAYMENTS = {
         'false': "Inativo",        
@@ -30,8 +31,10 @@ export default function UserList({ jwt, user }) {
             if(responseUsers.data){
                 setUsers(responseUsers.data);
             };
+            setLoading(false);
         } catch(err) {
             setUsers([]);
+            setLoading(true);
         }
     }
     
@@ -69,7 +72,7 @@ export default function UserList({ jwt, user }) {
                     } */}
 
                 </Flex>
-
+                    
                 <Table colorScheme='gray.200'>
                     <Thead>
                         <Tr>
@@ -80,44 +83,83 @@ export default function UserList({ jwt, user }) {
                             <Th>Acesso</Th>
                         </Tr>
                     </Thead>
-                    <Tbody>
-                        { users.map((e) => {
-                            return(
-                                <Tr>
-                                    <Td>
-                                        <Box>
-                                            <Text fontWeight='bold'>{e.company_name}</Text>
-                                            <Text fontWeight='sm'>{e.at}</Text>
-                                        </Box>
-                                    </Td>
-                                    <Td>
-                                        {formatDate(e.createdAt)}
-                                    </Td>
-                                    <Td>
-                                        {e.document}
-                                    </Td>
-                                    <Td>
-                                        {STATUS_PAYMENTS[e.status]}
-                                    </Td>
-                                    <Td>
-                                        <HStack spacing='2'>
-                                            <Link as={RouterLink} to={`/clients/${e.account_token}`} display="flex" algin="center">
-                                                <Button
-                                                as='a'
-                                                size='sm'
-                                                fontSize='sm'
-                                                colorScheme='red'
-                                                leftIcon={<Icon as={RiPencilLine} />}
-                                                >
-                                                    BO Conta
-                                                </Button>
-                                            </Link>
-                                        </HStack>
-                                    </Td>
-                                </Tr>
-                            )
-                        })}
-                    </Tbody>
+                    { loading ?                     
+                        <Tbody>
+                            <Tr>
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                                                                                              
+                            </Tr>                                                                                   
+                            <Tr>
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                                                                                              
+                            </Tr>                                                                                   
+                        </Tbody>                        
+                    :                        
+                        <Tbody>                        
+                            {users.map((e) => {
+                                return(
+                                    <Tr>
+                                        <Td>
+                                            <Box>
+                                                <Text fontWeight='bold'>{e.company_name}</Text>
+                                                <Text fontWeight='sm'>{e.at}</Text>
+                                            </Box>
+                                        </Td>
+                                        <Td>
+                                            {formatDate(e.createdAt)}
+                                        </Td>
+                                        <Td>
+                                            {e.document}
+                                        </Td>
+                                        <Td>
+                                            {STATUS_PAYMENTS[e.status]}
+                                        </Td>
+                                        <Td>
+                                            <HStack spacing='2'>
+                                                <Link as={RouterLink} to={`/clients/${e.account_token}`} display="flex" algin="center">
+                                                    <Button
+                                                    as='a'
+                                                    size='sm'
+                                                    fontSize='sm'
+                                                    colorScheme='red'
+                                                    leftIcon={<Icon as={RiPencilLine} />}
+                                                    >
+                                                        BO Conta
+                                                    </Button>
+                                                </Link>
+                                            </HStack>
+                                        </Td>
+                                    </Tr>
+                                )
+                            })}
+                        </Tbody>
+                    }
                 </Table>
 
             </Box>

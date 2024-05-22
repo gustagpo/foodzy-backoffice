@@ -48,8 +48,8 @@ function Header(props) {
               <Link as={RouterLink} to='/clients' display="flex" algin="center">
                 <Text>Clientes</Text>
               </Link>
-              <Link as={RouterLink} to='/partners' display="flex" algin="center">
-                <Text>Parceiros</Text>
+              <Link as={RouterLink} to='/plans' display="flex" algin="center">
+                <Text>Planos</Text>
               </Link>
               {/* <Link as={RouterLink} to='/exams' display="flex" algin="center">
                 <Text>Resultado de Exames</Text>
