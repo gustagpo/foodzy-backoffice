@@ -179,7 +179,7 @@ export default function EditUsers({jwt, user}) {
     if(val === '$') {
       return
     } else {
-      return val.replace(/^\$/, '');
+      return Number(val.replace(/^\$/, ''));
     }
   };
 
