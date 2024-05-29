@@ -188,14 +188,14 @@ export default function EditUsers({jwt, user}) {
 
     const body = {
       account_id: account.id,
-      amount: amount,
-      pix_limit: pixLimit,
-      transaction_limit: transactionLimit,
-      card_limit: cardLimit,
-      pix_fee: pixFee,
-      receive_pix_fee: receivePixFee,
-      ted_fee: tedFee,
-      boleto_fee: boletoFee,
+      amount: Number(amount),
+      pix_limit: Number(pixLimit),
+      transaction_limit: Number(transactionLimit),
+      card_limit: Number(cardLimit),
+      pix_fee: Number(pixFee),
+      receive_pix_fee: Number(receivePixFee),
+      ted_fee: Number(tedFee),
+      boleto_fee: Number(boletoFee),
       plan_id: planId
     };
 
