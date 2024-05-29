@@ -613,8 +613,8 @@ export default function EditUsers({jwt, user}) {
                     Valor de Manutenção da Conta (mês)
                   </Text>
                   <NumberInput
-                    onChange={(valueString) => setAmount(parse(valueString))}
-                    value={format(amount)}
+                    onChange={(valueString) => setAmount(valueString)}
+                    value={amount}
                     precision={2}
                     borderColor='#20242D'
                     borderRadius={5}
@@ -634,8 +634,8 @@ export default function EditUsers({jwt, user}) {
                       Limite de PIX (diário)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setPixLimit(parse(valueString))}
-                      value={format(pixLimit)}
+                      onChange={(valueString) => setPixLimit(valueString)}
+                      value={pixLimit}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -656,8 +656,8 @@ export default function EditUsers({jwt, user}) {
                       Limite de transação (diário por conta)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setTransactionLimit(parse(valueString))}
-                      value={format(transactionLimit)}
+                      onChange={(valueString) => setTransactionLimit(valueString)}
+                      value={transactionLimit}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -714,8 +714,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de saída do PIX (reais)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setPixFee(parse(valueString))}
-                      value={format(pixFee)}
+                      onChange={(valueString) => setPixFee(valueString)}
+                      value={pixFee}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -732,8 +732,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de saída do TED (reais)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setTedFee(parse(valueString))}
-                      value={format(tedFee)}
+                      onChange={(valueString) => setTedFee(valueString)}
+                      value={tedFee}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
@@ -750,8 +750,8 @@ export default function EditUsers({jwt, user}) {
                       Taxa de emissão do Boleto (reais)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setBoletoFee(parse(valueString))}
-                      value={format(boletoFee)}
+                      onChange={(valueString) => setBoletoFee(valueString)}
+                      value={boletoFee}
                       precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
