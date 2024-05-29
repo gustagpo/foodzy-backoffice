@@ -606,7 +606,7 @@ export default function EditUsers({jwt, user}) {
                   Plano de Conta
                 </Text>                  
                 <Select name='plan' id='plan' placeholder='Selecione a opção' mb='8'>
-                  <option value='0' selected>Free</option>
+                  <option value='0' selected>Basic</option>
                 </Select>
                 <Box>
                   <Text htmlFor='name' mb='2'>
