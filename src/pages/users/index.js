@@ -48,7 +48,7 @@ export default function UserList({ jwt, user }) {
         <Flex display="flex" w='100%' flexDirection="column">
             <Box w='100%' mb={16} p='50px' bg='gray.100' p='8' >
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Clientes Cadastrados</Heading>
+                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Contas Cadastradas</Heading>
                     
                     {/* { plan && plan.type == 1 && plan.plan_type == 7 ?
                         users && users.length < 4 ?

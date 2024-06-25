@@ -41,7 +41,7 @@ export default function Login() {
   async function handleSubmit() {
     setLoading(true);
     try{
-      const response = await api.post('/auth/login', {
+      const response = await api.post('/auth/backoffice', {
         username: document,
         password: password,
       }, {})

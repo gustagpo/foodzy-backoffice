@@ -46,7 +46,7 @@ function Header(props) {
               borderColor="gray.500"
             >
               <Link as={RouterLink} to='/clients' display="flex" algin="center">
-                <Text>Clientes</Text>
+                <Text>Contas</Text>
               </Link>
               <Link as={RouterLink} to='/plans' display="flex" algin="center">
                 <Text>Planos</Text>
