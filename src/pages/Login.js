@@ -41,7 +41,7 @@ export default function Login() {
   async function handleSubmit() {
     setLoading(true);
     try{
-      const response = await api.post('/auth/login', {
+      const response = await api.post('/bo/login', {
         username: document,
         password: password,
       }, {})

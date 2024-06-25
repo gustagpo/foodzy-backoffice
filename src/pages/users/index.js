@@ -128,7 +128,7 @@ export default function UserList({ jwt, user }) {
                                         <Td>
                                             <Box>
                                                 <Text fontWeight='bold'>{e.company_name}</Text>
-                                                <Text fontWeight='sm'>{e.at}</Text>
+                                                <Text fontWeight='sm'>{e.account_token}</Text>
                                             </Box>
                                         </Td>
                                         <Td>

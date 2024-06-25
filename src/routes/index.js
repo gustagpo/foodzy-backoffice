@@ -4,6 +4,8 @@ import { useDispatch, useSelector, connect } from "react-redux";
 import Home from '../pages/Home';
 import Users from '../pages/users';
 import EditUsers from '../pages/users/edit';
+import Clients from '../pages/clients';
+import EditClients from '../pages/clients/edit';
 import Partners from '../pages/partners';
 import EditPartners from '../pages/partners/edit';
 import CreatePartners from '../pages/partners/create';
@@ -50,6 +52,16 @@ function Index(props) {
             <Route path="/clients/:at" element={
                 <Protected isAuthenticated={isAuthenticated}>
                     <EditUsers jwt={jwt} user={user}/>
+                </Protected>
+            }/>
+            <Route path="/users" element={
+                <Protected isAuthenticated={isAuthenticated}>
+                    <Clients jwt={jwt} user={user} />
+                </Protected>
+            }/>
+            <Route path="/users/:id" element={
+                <Protected isAuthenticated={isAuthenticated}>
+                    <EditClients jwt={jwt} user={user}/>
                 </Protected>
             }/>
             <Route path="/plans" element={

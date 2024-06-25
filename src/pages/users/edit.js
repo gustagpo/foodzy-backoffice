@@ -48,6 +48,16 @@ export default function EditUsers({jwt, user}) {
   const toast = useToast();
   const navigation = useNavigate();
 
+  const textDocs = {
+    'PHOTO_DOCUMENT': 'Foto do Documento',
+    'BACK_PHOTO_DOCUMENT': 'Foto Traseira do Documento',
+    'SELFIE': 'Selfie',
+    'PROOF_OF_RESIDENCE': 'Comprovante de Endereço',
+    'CNPJ_CARD': 'Cartão CNPJ',
+    'SOCIAL_CONTRACT': 'Contrato/Estatuto Social',
+    'PROOF_OF_COMPANY_ADDRESS': 'Comprovante de Endereço da Empresa'
+  }
+
   function handleDate(){
     setShow(true);
   };
@@ -67,6 +77,58 @@ export default function EditUsers({jwt, user}) {
         };
     };
     setDocument(e);
+  };
+
+  async function handleApproveDocument(id, status){
+    setLoading(true);
+
+    try{
+      const response = await api.post(`/bo/approve-document`, {
+        documentId: id,
+        status: status
+      },{
+        headers: {
+          'Authorization': 'Bearer ' + jwt
+        }
+      })
+
+      if(response.data.status == true){
+        toast({
+          title: 'Documento aprovado',
+          description: 'Alteração realizada com sucesso',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+      } else {
+        toast({
+          title: 'Documento reprovado',
+          description: 'Alteração realizada com sucesso',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+
+      };
+
+      console.log(id, status);
+      console.log(response.data);
+      setLoading(false);
+      loadData();
+
+      
+    } catch (err) {
+      console.log(err.data)
+      toast({
+        title: 'Erro na aprovação.',
+        description: err.data,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      setLoading(false);
+    }
   };
 
   async function handleStatusAccount(e){
@@ -168,18 +230,6 @@ export default function EditUsers({jwt, user}) {
         isClosable: true,
       });
       setLoading(false);
-    }
-  };
-
-  function format(val) {
-    return `$` + val;
-  };
-
-  function parse(val) {
-    if(val === '$') {
-      return
-    } else {
-      return Number(val.replace(/^\$/, ''));
     }
   };
 
@@ -455,11 +505,50 @@ export default function EditUsers({jwt, user}) {
             <Card w='100%' direction='column'>               
               <Heading size='lg' fontWeight='normal' textAlign='center' mb='6'>Documentos da Conta</Heading>
               <Accordion allowToggle w='100%'>
-                <AccordionItem>
+                { docs.map((e) => (                
+                  <AccordionItem>
+                    <h2>
+                      <AccordionButton>
+                        <Box as='span' flex='1' textAlign='left'>
+                          {textDocs[e.type]}
+                        </Box>
+                        {
+                          e.status === true ?                           
+                            <Badge colorScheme='green' flex='1' textAlign='left'>
+                              Aprovado
+                            </Badge>                            
+                          :
+                          (e.status === false ?
+                            <Badge colorScheme='red' flex='1' textAlign='left'>
+                              Reprovado
+                            </Badge>
+                            :
+                            <Badge colorScheme='purple' flex='1' textAlign='left'>
+                              Em aprovação
+                            </Badge>
+                          )
+                        }
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      { e.status === null ? 
+                        <HStack spacing='4' justify='center'>
+                          <Button colorScheme='red' onClick={() => handleApproveDocument(e.id, false)} >Reprovar</Button>
+                          <Button colorScheme='whatsapp' onClick={() => handleApproveDocument(e.id, true)} >Aprovar</Button>
+                        </HStack>
+                      :
+                        <></>
+                      }
+                      <Image src={e.file.url}/>                      
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}                
+                {/* <AccordionItem>
                   <h2>
                     <AccordionButton>
                       <Box as='span' flex='1' textAlign='left'>
-                        Foto do Documento
+                        Teste
                       </Box>
                       <Badge colorScheme='purple' flex='1' textAlign='left'>
                         Em aprovação
@@ -474,127 +563,7 @@ export default function EditUsers({jwt, user}) {
                     </HStack>
                     <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
                   </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as='span' flex='1' textAlign='left'>
-                        Foto Traseira do Documento
-                      </Box>
-                      <Badge colorScheme='purple' flex='1' textAlign='left'>
-                        Em aprovação
-                      </Badge>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <HStack spacing='4' justify='center'>
-                      <Button colorScheme='red'>Reprovar</Button>
-                      <Button colorScheme='whatsapp'>Aprovar</Button>
-                    </HStack>
-                    <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
-                  </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as='span' flex='1' textAlign='left'>
-                        Comprovante de Endereço
-                      </Box>
-                      <Badge colorScheme='purple' flex='1' textAlign='left'>
-                        Em aprovação
-                      </Badge>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <HStack spacing='4' justify='center'>
-                      <Button colorScheme='red'>Reprovar</Button>
-                      <Button colorScheme='whatsapp'>Aprovar</Button>
-                    </HStack>
-                    <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
-                  </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as='span' flex='1' textAlign='left'>
-                        Selfie
-                      </Box>
-                      <Badge colorScheme='purple' flex='1' textAlign='left'>
-                        Em aprovação
-                      </Badge>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <HStack spacing='4' justify='center'>
-                      <Button colorScheme='red'>Reprovar</Button>
-                      <Button colorScheme='whatsapp'>Aprovar</Button>
-                    </HStack>
-                    <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
-                  </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as='span' flex='1' textAlign='left'>
-                        Cartão CNPJ
-                      </Box>
-                      <Badge colorScheme='purple' flex='1' textAlign='left'>
-                        Em aprovação
-                      </Badge>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <HStack spacing='4' justify='center'>
-                      <Button colorScheme='red'>Reprovar</Button>
-                      <Button colorScheme='whatsapp'>Aprovar</Button>
-                    </HStack>
-                    <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
-                  </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as='span' flex='1' textAlign='left'>
-                        Comprovante de Endereço CNPJ
-                      </Box>
-                      <Badge colorScheme='green' flex='1' textAlign='left'>
-                        Aprovado
-                      </Badge>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    {/* <HStack spacing='4' justify='center'>
-                      <Button colorScheme='red'>Reprovar</Button>
-                      <Button colorScheme='whatsapp'>Aprovar</Button>
-                    </HStack> */}
-                    <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
-                  </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as='span' flex='1' textAlign='left'>
-                        Contrato/Estatuto Social
-                      </Box>
-                      <Badge colorScheme='red' flex='1' textAlign='left'>
-                        Reprovado
-                      </Badge>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    {/* <HStack spacing='4' justify='center'>
-                      <Button colorScheme='red'>Reprovar</Button>
-                      <Button colorScheme='whatsapp'>Aprovar</Button>
-                    </HStack> */}
-                    <Image src='https://fxbank.com.br/wp-content/uploads/2024/05/iphone.png'/>
-                  </AccordionPanel>
-                </AccordionItem>
+                </AccordionItem> */}
               </Accordion>                                          
             </Card>
           </Flex>
