@@ -115,7 +115,7 @@ export default function PartnerList({jwt, user}) {
                         </Flex>
                         <Flex height={160} direction="column">
                             <Text fontSize='lg'>Taxas pagas em Pix [Bass]</Text>                                                                                                                                          
-                            <Heading size='lg'>{formatValue(data.inAmount)}</Heading>
+                            <Heading size='lg'>{formatValue(data.pixAmount)}</Heading>
                             <br/>    
                             <Text fontSize='lg'>Taxas pagas em Pix [API]</Text>                                                                                                                                          
                             <Heading size='lg'>{formatValue(data.apiAmount)}</Heading>                                                                                                                                                          
