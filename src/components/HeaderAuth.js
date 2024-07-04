@@ -54,6 +54,9 @@ function Header(props) {
               <Link as={RouterLink} to='/plans' display="flex" algin="center">
                 <Text>Planos</Text>
               </Link>
+              <Link as={RouterLink} to='/accounting' display="flex" algin="center">
+                <Text>Contabilidade</Text>
+              </Link>
               {/* <Link as={RouterLink} to='/exams' display="flex" algin="center">
                 <Text>Resultado de Exames</Text>
               </Link> */}              

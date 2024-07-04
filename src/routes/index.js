@@ -9,6 +9,7 @@ import EditClients from '../pages/clients/edit';
 import Partners from '../pages/partners';
 import EditPartners from '../pages/partners/edit';
 import CreatePartners from '../pages/partners/create';
+import Accounting from "../pages/accounting";
 import Login from '../pages/Login';
 import Config from '../pages/Config';
 import Admin from "../pages/Admin";
@@ -62,6 +63,11 @@ function Index(props) {
             <Route path="/users/:id" element={
                 <Protected isAuthenticated={isAuthenticated}>
                     <EditClients jwt={jwt} user={user}/>
+                </Protected>
+            }/>
+            <Route path="/accounting" element={
+                <Protected isAuthenticated={isAuthenticated}>
+                    <Accounting jwt={jwt} user={user} />
                 </Protected>
             }/>
             <Route path="/plans" element={

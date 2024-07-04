@@ -137,8 +137,8 @@ export default function Home({ jwt, user }) {
                   <Flex height={160} direction="column" pt="4">
                     <Heading size='xl'>{formatValue(data.feeAmount)}</Heading>
                     <br/>    
-                    <Text fontSize='lg'>PIX (in): </Text>                                                                                                                                          
-                    <Text fontSize='lg'>PIX (out):</Text>                                                                                                                                          
+                    <Text fontSize='lg'>PIX (in): {formatValue(data.depositAmount)}</Text>                                                                                                                                          
+                    <Text fontSize='lg'>PIX (out): {formatValue(data.pixAmount)}</Text>                                                                                                                                          
                 </Flex>
               </Box>
               <Box
