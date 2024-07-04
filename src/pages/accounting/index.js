@@ -132,6 +132,7 @@ export default function PartnerList({jwt, user}) {
                             <Th>Faturamento</Th>
                             <Th>Lucro</Th>
                             <Th>Mensalidade</Th>
+                            <Th>Total (NF)</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -161,6 +162,9 @@ export default function PartnerList({jwt, user}) {
                                     </Td>                                    
                                     <Td>
                                         {formatValue(e.charge)}
+                                    </Td>                                    
+                                    <Td>
+                                        {formatValue(e.total)}
                                     </Td>                                    
                                 </Tr>                        
                             )
