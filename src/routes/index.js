@@ -80,7 +80,7 @@ function Index(props) {
                     <CreatePartners jwt={jwt} user={user}/>
                 </Protected>
             }/>
-            <Route path="/plans/edit/" element={
+            <Route path="/plans/edit/:id" element={
                 <Protected isAuthenticated={isAuthenticated}>
                     <EditPartners jwt={jwt} user={user}/>
                 </Protected>

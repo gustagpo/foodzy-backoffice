@@ -1,110 +1,59 @@
-import React, {useState, useEffect} from 'react';
-import { useToast, Box, Select, InputGroup, InputLeftElement, Heading, Input, SimpleGrid, VStack, FormControl, FormLabel, Flex, HStack, Button, Link, Icon} from '@chakra-ui/react';
-import { PhoneIcon } from '@chakra-ui/icons';
-import { FiUser } from 'react-icons/fi';
-import { BsCalendarDate } from 'react-icons/bs';
-import InputMask from 'react-input-mask';
-import { AiOutlineIdcard, AiOutlineMail, AiOutlineLock } from 'react-icons/ai';
-import { Link as RouterLink, useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import React, {useState} from 'react';
+import { useToast, Box, Card, Select, CardBody, InputGroup, InputLeftElement, Heading, Input, SimpleGrid, VStack, FormControl, FormLabel, Flex, HStack, Button, Link, Icon, Text, NumberInput, NumberInputField} from '@chakra-ui/react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { cnpj, cpf } from 'cpf-cnpj-validator';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
 export default function CreatePartners({jwt, user}) {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [type, setType] = useState('');
-  const [document, setDocument] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [amount, setAmount] = useState(0);
+  const [pixLimit, setPixLimit] = useState(0);
+  const [transactionLimit, setTransactionLimit] = useState(0);
+  const [cardLimit, setCardLimit] = useState(0);
+  const [pixFee, setPixFee] = useState(0);
+  const [receivePixFee, setReceivePixFee] = useState(0);
+  const [tedFee, setTedFee] = useState(0);
+  const [boletoFee, setBoletoFee] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const toast = useToast();
   const navigation = useNavigate();
 
-  function checkCPF(e){
-    if(e.length === 14) {
-        const validCpf = cpf.isValid(e);
-        if(!validCpf) {   
-            toast({
-                title: 'CPF Inválido.',
-                description: "O número do CPF colocado é inválido.",
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
-            setDocument('');
-        };
-    };
-    setDocument(e);
-  };
-
-  function checkCNPJ(e){
-    if(e.length === 18) {
-        const validCnpj = cnpj.isValid(e);
-        if(!validCnpj) {   
-            toast({
-                title: 'CNPJ Inválido.',
-                description: "O número do CNPJ colocado é inválido.",
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
-            setDocument('');
-        };
-    };
-    setDocument(e);
-  };
-
   async function handleSubmit() {
     setLoading(true);
 
-    if(password) {
-      if(!confirmPassword) {
-        toast({
-          title: 'Preenhca o campo de confirmar senha.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return
-      }
-      if(password != confirmPassword) {
-        toast({
-          title: 'Senha diferente em confirmar senha',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return
-      }
-    };
-
     const body = {
       name: name,
-      document: document,
-      email: email,
-      phone: phone,
-      type: Number(type),
-      status: 1,
-      password: password,
-      confirmPassword: confirmPassword
+      amount: Number(amount),
+      pix_limit: Number(pixLimit),
+      transaction_limit: Number(transactionLimit),
+      card_limit: Number(cardLimit),
+      pix_fee: Number(pixFee),
+      receive_pix_fee: Number(receivePixFee),
+      ted_fee: Number(tedFee),
+      boleto_fee: Number(boletoFee),
     }
 
     console.log(body);
 
     try{
-      const response = await api.post('/partners', body, {
+      const response = await api.post('/bo/create-plan', body, {
         headers: {
           'Authorization': 'Bearer '+jwt
         }
       })
 
       if(response.data){
-        const partner = response.data.user;
-        navigation(`/plans/edit?doc=${partner.document}`);
+        const partner = response.data;
+        toast({
+          title: 'Plano criado',
+          description: 'Alteração realizada com sucesso',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        navigation(`/plans/edit/${partner.id}`);
       }
 
       setLoading(false);
@@ -125,186 +74,188 @@ export default function CreatePartners({jwt, user}) {
   return (
     <AuthLayout>
         <Box w='100%' flex='1' p='8'>
-          <Heading size='lg' fontWeight='normal'>Cadastrar um parceiro</Heading>
+          <Heading size='lg' fontWeight='normal'>Cadastrar um Plano</Heading>          
 
-          <VStack spacing='4' mt={8}>
-            <SimpleGrid minChildWidth='240px' spacing='8' w='100%'>
-              <FormControl isRequired>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none'>
-                    <Icon as={FiUser} color='#004AAD' />
-                  </InputLeftElement>
+          <Flex w='100%' mt={8}>
+            <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
+              <CardBody justify='center'> 
+                <Box mb='2'>
+                  <Text htmlFor='name' mb='2'>
+                    Nome do Plano
+                  </Text>                                  
                   <Input 
-                    name='name'
-                    id='name'
-                    type='text'
-                    size='md'
-                    color='black'
-                    borderColor='#004AAD'
-                    borderRadius={20}
-                    placeholder='Nome Completo'
-                    _placeholder={{
-                        fontSize: '18',
-                        color: '#004AAD'
-                    }}
-                    value={name}
-                    onChange={(event)=> setName(event.target.value)}
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl isRequired>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none'>
-                    <PhoneIcon color='#004AAD' />
-                  </InputLeftElement>
-                  <Input
-                    as={InputMask}
-                    name='phone'
-                    id='phone'
-                    type='text'
-                    size='md'
-                    color='black'
-                    mask="(99) 99999-9999"
-                    maskChar={null}
-                    borderColor='#004AAD'
-                    borderRadius={20}
-                    placeholder='Celular'
-                    _placeholder={{
-                        fontSize: '18',
-                        color: '#004AAD'
-                    }}
-                    value={phone}
-                    onChange={(event)=> setPhone(event.target.value)}
-                  />
-                </InputGroup>
-              </FormControl>
-            </SimpleGrid>
-            <SimpleGrid minChildWidth='240px' spacing='8' w='100%'>
-              <FormControl isRequired>
-                <Select
-                  size='md'
-                  color='black'
-                  borderColor='#004AAD'
-                  borderRadius={20}
-                  placeholder='Tipo de parceiro'
-                  _placeholder={{
-                      fontSize: '18',
-                      color: '#004AAD'
-                  }}
-                  value={type}
-                  onChange={(event)=> setType(event.target.value)}
-                >
-                  <option value={0}>Pessoa Física</option>
-                  <option value={1}>Pessoa Jurídica</option>
-                </Select>
-              </FormControl>
-            </SimpleGrid>
-            <SimpleGrid minChildWidth='240px' spacing='8' w='100%'>
-              <FormControl isRequired>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none'>
-                    <Icon as={AiOutlineIdcard} color='#004AAD' />
-                  </InputLeftElement>
-                  <Input
-                    as={InputMask}
-                    name='document'
-                    id='document'
-                    type='text'
-                    size='md'
-                    color='black'
-                    disabled={type ? false : true}
-                    mask={type == 0 ? "999.999.999-99" : "99.999.999/9999-99"}
-                    maskChar={null}
-                    borderColor='#004AAD'
-                    borderRadius={20}
-                    placeholder='Documento'
-                    _placeholder={{
-                        fontSize: '18',
-                        color: '#004AAD'
-                    }}
-                    value={document}
-                    onChange={(event) => {
-                      if(type) {
-                        type == 0 ? checkCPF(event.target.value) : checkCNPJ(event.target.value) ;
-                      }
-                    }}
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl isRequired>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none'>
-                    <Icon as={AiOutlineMail} color='#004AAD' />
-                  </InputLeftElement>
-                  <Input
-                      name='email'
-                      id='email'
-                      type='email'
-                      size='md'
-                      color='black'
-                      borderColor='#004AAD'
-                      borderRadius={20}
-                      placeholder='E-mail'
+                      name='name'
+                      id='name'
+                      type='text'                                        
+                      borderColor='#20242D'
+                      borderRadius={5}
                       _placeholder={{
                           fontSize: '18',
-                          color: '#004AAD'
+                          color: '#20242D'
                       }}
-                      value={email}
-                      onChange={(event)=> setEmail(event.target.value)}
-                  />
-                </InputGroup>
-              </FormControl>
-            </SimpleGrid>
-            <SimpleGrid minChildWidth='240px' spacing='8' w='100%'>
-              <FormControl isRequired>
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none'>
-                    <Icon as={AiOutlineLock} color='#004AAD' />
-                  </InputLeftElement>
-                  <Input
-                    name='password'
-                    id='password'
-                    type='password'
-                    size='md'
-                    color='black'
-                    borderColor='#004AAD'
-                    borderRadius={20}
-                    placeholder='Senha'
+                      value={name}
+                      onChange={(event)=> setName(event.target.value)}
+                    />
+                </Box>             
+                <Box>
+                  <Text htmlFor='name' mb='2'>
+                    Valor de Manutenção da Conta (mês)
+                  </Text>
+                  <NumberInput
+                    onChange={(valueString) => setAmount(valueString)}
+                    value={amount}
+                    precision={2}
+                    borderColor='#20242D'
+                    borderRadius={5}
                     _placeholder={{
                         fontSize: '18',
-                        color: '#004AAD'
+                        color: '#20242D'
                     }}
-                    value={password}
-                    onChange={(event)=> setPassword(event.target.value)}
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl >
-                <InputGroup>
-                  <InputLeftElement pointerEvents='none'>
-                    <Icon as={AiOutlineLock} color='#004AAD' />
-                  </InputLeftElement>
-                  <Input
-                    name='confirm_password'
-                    id='confirm_password'
-                    type='password'
-                    size='md'
-                    color='black'
-                    disabled={ password ? false : true }
-                    borderColor='#004AAD'
-                    borderRadius={20}
-                    placeholder='Confirmar senha'
-                    _placeholder={{
-                        fontSize: '18',
-                        color: '#004AAD'
-                    }}
-                    value={confirmPassword}
-                    onChange={(event)=> setConfirmPassword(event.target.value)}
-                  />
-                </InputGroup>
-              </FormControl>
-            </SimpleGrid>
-          </VStack>
+                  >
+                    <NumberInputField />                      
+                  </NumberInput>                                                     
+                </Box>                  
+              </CardBody>                                               
+              <VStack>
+                <CardBody>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Limite de PIX (diário)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setPixLimit(valueString)}
+                      value={pixLimit}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />
+                      {/* <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper> */}
+                    </NumberInput>                                                    
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Limite de transação (diário por conta)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setTransactionLimit(valueString)}
+                      value={transactionLimit}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                      
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Quantidade de cartão (por conta)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setCardLimit(valueString)}
+                      value={cardLimit}
+                      precision={0}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                </CardBody>                  
+              </VStack>             
+              <VStack>
+                <CardBody>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa de entrada do PIX (%)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setReceivePixFee(valueString)}
+                      value={receivePixFee}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa de saída do PIX (reais)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setPixFee(valueString)}
+                      value={pixFee}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa de saída do TED (reais)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setTedFee(valueString)}
+                      value={tedFee}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa de emissão do Boleto (reais)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setBoletoFee(valueString)}
+                      value={boletoFee}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>                  
+                </CardBody>                  
+              </VStack>             
+            </Card>
+          </Flex>
           <Flex mt='8' justify='flex-end'>
             <HStack spacing='4'>
               <Link as={RouterLink} to='/plans' display="flex" algin="center">
