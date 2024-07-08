@@ -54,7 +54,7 @@ export default function EditPartners({jwt, user}) {
           duration: 5000,
           isClosable: true,
         });
-        navigation(`/plans`);
+        navigation('/plans');
       }
 
       setLoading(false);
