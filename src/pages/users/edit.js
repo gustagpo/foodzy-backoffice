@@ -13,22 +13,10 @@ import AuthLayout from '../_layouts/AuthLayout';
 
 export default function EditUsers({jwt, user}) {
   const { at } = useParams();
-  const [newUser, setNewUser] = useState('');
-  const [plan, setPlan] = useState('');
-  const [feePix, setFeePix] = useState(0);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [birthday, setBirthday] = useState('');
-  const [document, setDocument] = useState('');
-  const [phone, setPhone] = useState('');
-  const [oldPassword, setOldPassword] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [statusAccount, setStatusAccount] = useState(false);
   const [statusDocument, setStatusDocument] = useState(false);
-
   const [balance, setBallance] = useState('');
   const [account, setAccount] = useState({});
   const [docs, setDocs] = useState([]);
@@ -44,6 +32,7 @@ export default function EditUsers({jwt, user}) {
   const [tedFee, setTedFee] = useState(0);
   const [boletoFee, setBoletoFee] = useState(0);
   const [planId, setPlanId] = useState(null);
+  const [plans, setPlans] = useState([]);
 
   const toast = useToast();
   const navigation = useNavigate();
@@ -60,23 +49,6 @@ export default function EditUsers({jwt, user}) {
 
   function handleDate(){
     setShow(true);
-  };
-
-  function checkCPF(e){
-    if(e.length === 14) {
-        const validCpf = cpf.isValid(e);
-        if(!validCpf) {   
-            toast({
-                title: 'CPF Inválido.',
-                description: "O número do CPF colocado é inválido.",
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
-            setDocument('');
-        };
-    };
-    setDocument(e);
   };
 
   async function handleApproveDocument(id, status){
@@ -233,6 +205,48 @@ export default function EditUsers({jwt, user}) {
     }
   };
 
+  async function handlePlan(e){
+    setLoading(true);
+
+    try{      
+      const responsePlan = await api.post(`/bo/get-plan`, {
+        planId: e
+      }, {
+        headers: { 
+            'Authorization': 'Bearer ' + jwt,
+            'at': at,          
+          }      
+      });
+
+      console.log(responsePlan.data);
+  
+      if(responsePlan.data){
+        setAmount(responsePlan.data.amount)
+        setPixLimit(responsePlan.data.pix_limit)
+        setTransactionLimit(responsePlan.data.transaction_limit)
+        setCardLimit(responsePlan.data.card_limit)
+        setPixFee(responsePlan.data.pix_fee)
+        setReceivePixFee(responsePlan.data.receive_pix_fee)
+        setTedFee(responsePlan.data.ted_fee)
+        setBoletoFee(responsePlan.data.boleto_fee)
+        setPlanId(responsePlan.data.id)
+        setLoading(false);
+      };
+    } catch(err) {
+      setAmount(0);
+      setPixLimit(0);
+      setTransactionLimit(0);
+      setCardLimit(0);
+      setPixFee(0);
+      setReceivePixFee(0);
+      setTedFee(0);
+      setBoletoFee(0);
+      setPlanId(null);
+      setLoading(false);
+    }
+
+  }
+
   async function handleSubmit() {
     setLoading(true);
 
@@ -335,8 +349,30 @@ export default function EditUsers({jwt, user}) {
     }
   };
   
+  async function loadPlans(){
+    setLoading(true);
+
+    try{      
+      const responsePlans = await api.post(`/bo/list-plan`, {}, {
+        headers: { 
+            'Authorization': 'Bearer ' + jwt,
+            'at': at,          
+          }      
+      });
+  
+      if(responsePlans.data){
+        setPlans(responsePlans.data);
+        setLoading(false);
+      };
+    } catch(err) {
+      setPlans([]);
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    loadData()
+    loadData();
+    loadPlans();
   }, [jwt])
 
   return (
@@ -574,8 +610,13 @@ export default function EditUsers({jwt, user}) {
                 <Text htmlFor='name' mb='2'>
                   Plano de Conta
                 </Text>                  
-                <Select name='plan' id='plan' placeholder='Selecione a opção' mb='8'>
-                  <option value='0' selected>Basic</option>
+                <Select name='plan' id='plan' placeholder='Selecione a opção' mb='8' value={planId} onChange={(e) => handlePlan(e.target.value)}>
+                  { plans && plans.map((p) => {
+                    return(
+                      <option key={p.id} value={p.id} selected={(planId == p.id ? true: false)} >{p.name}</option>
+                    )
+                  })}
+                  <option value='0' selected={planId == null ? true : false}>Personalizado</option>
                 </Select>
                 <Box>
                   <Text htmlFor='name' mb='2'>
@@ -585,6 +626,7 @@ export default function EditUsers({jwt, user}) {
                     onChange={(valueString) => setAmount(valueString)}
                     value={amount}
                     precision={2}
+                    isDisabled={planId == null ? false : true}
                     borderColor='#20242D'
                     borderRadius={5}
                     _placeholder={{
@@ -606,6 +648,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setPixLimit(valueString)}
                       value={pixLimit}
                       precision={2}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
@@ -628,6 +671,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setTransactionLimit(valueString)}
                       value={transactionLimit}
                       precision={2}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
@@ -646,6 +690,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setCardLimit(valueString)}
                       value={cardLimit}
                       precision={0}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
@@ -668,6 +713,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setReceivePixFee(valueString)}
                       value={receivePixFee}
                       precision={2}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
@@ -686,6 +732,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setPixFee(valueString)}
                       value={pixFee}
                       precision={2}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
@@ -704,6 +751,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setTedFee(valueString)}
                       value={tedFee}
                       precision={2}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
@@ -722,6 +770,7 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setBoletoFee(valueString)}
                       value={boletoFee}
                       precision={2}
+                      isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
