@@ -34,6 +34,10 @@ export default function EditUsers({jwt, user}) {
   const [boletoFee, setBoletoFee] = useState(0);
   const [planId, setPlanId] = useState(null);
   const [plans, setPlans] = useState([]);
+  const [statusWorkspace, setStatusWorkspace] = useState(false);
+  const [workspaceId, setWorkspaceId] = useState('');
+  const [pixKey, setPixKey] = useState('');
+  const [qrCode, setQrCode] = useState('');
 
   const toast = useToast();
   const navigation = useNavigate();
@@ -248,9 +252,9 @@ export default function EditUsers({jwt, user}) {
       setLoading(false);
     }
 
-  }
+  };
 
-  async function handleSubmit() {
+  async function handleSubmit(){
     setLoading(true);
 
     const body = {
@@ -302,6 +306,89 @@ export default function EditUsers({jwt, user}) {
     }
   };
 
+  async function handleWorkspace(){
+    setLoading(true);
+
+    const body = {
+      account_id: account.id,
+      special_workspace: statusWorkspace,
+      workspace_id: workspaceId,
+      key_pix: pixKey,
+      pix_url: qrCode
+    };
+
+    try{
+      const response = await api.post(`/bo/account-workspace`, body, {
+        headers: {
+          'Authorization': 'Bearer ' + jwt
+        }
+      })
+
+      if(response.data){
+        console.log(response.data);
+        toast({
+          title: 'Cadastro atualizado.',
+          description: 'Alteração realizada com sucesso',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      };
+
+      setLoading(false);
+      loadData();
+
+    } catch (err) {
+      console.log(err.data)
+      toast({
+        title: 'Erro no cadastro.',
+        description: err.data,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      setLoading(false);
+      loadData();
+    }
+  };
+
+  async function handleAccountSecret(){
+    setLoading(true);
+
+    try{
+      const response = await api.post(`/bo/account-secret`, {
+        at: account.account_token
+      },{
+        headers: {
+          'Authorization': 'Bearer ' + jwt
+        }
+      })
+
+      if(response.data){        
+        toast({
+          title: 'Account Secret Enviado.',
+          description: 'Cadastro realizado com sucesso',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      };
+
+      setLoading(false);            
+    } catch (err) {
+      console.log(err.data)
+      toast({
+        title: 'Erro no cadastro.',
+        description: err.data,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      setLoading(false);
+    }
+  };
+
   async function loadData(){
     try{      
       const responseAccount = await api.post(`/bo/get-account`, {}, {
@@ -332,6 +419,10 @@ export default function EditUsers({jwt, user}) {
         }
         setStatusAccount(responseAccount.data.account.status);
         setStatusDocument(responseAccount.data.account.status_document);
+        setStatusWorkspace(responseAccount.data.account.special_workspace);
+        setWorkspaceId(responseAccount.data.account.workspace_id);
+        setPixKey(responseAccount.data.account.key_pix);
+        setQrCode(responseAccount.data.account.pix_url);
       };
     } catch(err) {
       setBallance('');
@@ -352,6 +443,10 @@ export default function EditUsers({jwt, user}) {
       setPlanId(null);
       setStatusAccount(false);
       setStatusDocument(false);
+      setStatusWorkspace(false);
+      setWorkspaceId('');
+      setPixKey('');
+      setQrCode('');
     }
   };
   
@@ -492,7 +587,10 @@ export default function EditUsers({jwt, user}) {
                     <Text htmlFor='status-account' mb='0'>
                       Aprovados
                     </Text>
-                  </FormControl>         
+                  </FormControl>
+                  <Flex mt='6'>                    
+                    <Button type='submit' onClick={handleAccountSecret} colorScheme='red'>Enviar Account Secret</Button>
+                  </Flex>         
                 </CardBody>
               </VStack>                
             </Card>
@@ -811,6 +909,92 @@ export default function EditUsers({jwt, user}) {
                   </Flex>
                 </CardBody>                  
               </VStack>             
+            </Card>
+          </Flex>
+          <Flex w='100%' mt={8}>
+            <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
+              <CardBody justify='center'>
+                <Heading size='lg' fontWeight='normal' textAlign='center' mb='4'>Workspace Especial</Heading>
+                <Text fontWeight='bold' mb='2'>Status</Text>                  
+                <FormControl display='flex' alignItems='center' mb='4'>
+                  <Text htmlFor='status-account' mb='0'>
+                    Inativo
+                  </Text>
+                  <Switch 
+                    id='status-account'
+                    colorScheme='red'
+                    mx='2'
+                    size='lg'
+                    isChecked={statusWorkspace}
+                    onChange={(e) => setStatusWorkspace(e.target.checked)}
+                  />
+                  <Text htmlFor='status-account' mb='0'>
+                    Ativo
+                  </Text>
+                </FormControl>
+                <Box mb='2'>
+                  <Text htmlFor='name' mb='2'>
+                    Workspace ID
+                  </Text>                                  
+                  <Input 
+                      name='name'
+                      id='name'
+                      type='text'          
+                      disabled={!statusWorkspace}                              
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                      value={workspaceId}
+                      onChange={(event)=> setWorkspaceId(event.target.value)}
+                    />
+                </Box>                 
+              </CardBody>                                               
+              <CardBody>              
+                <Box mb='2'>
+                  <Text htmlFor='name' mb='2'>
+                    Chave PIX
+                  </Text>                                  
+                  <Input 
+                      name='name'
+                      id='name'
+                      type='text'
+                      disabled={!statusWorkspace}                                         
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                      value={pixKey}
+                      onChange={(event)=> setPixKey(event.target.value)}
+                    />
+                </Box>  
+                <Box mb='2'>
+                  <Text htmlFor='name' mb='2'>
+                    URL QR Code
+                  </Text>                                  
+                  <Input 
+                      name='name'
+                      id='name'
+                      type='text' 
+                      disabled={!statusWorkspace}                                        
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                      value={qrCode}
+                      onChange={(event)=> setQrCode(event.target.value)}
+                    />
+                </Box>  
+                <Flex mt='8' justify='flex-end'>                    
+                  <Button type='submit' onClick={handleWorkspace} colorScheme='whatsapp'>Atualizar</Button>
+                </Flex>
+              </CardBody>                                         
             </Card>
           </Flex>
           <Flex mt='8' justify='flex-end'>
