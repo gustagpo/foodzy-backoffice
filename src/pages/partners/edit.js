@@ -14,6 +14,7 @@ export default function EditPartners({jwt, user}) {
   const [cardLimit, setCardLimit] = useState(0);
   const [pixFee, setPixFee] = useState(0);
   const [receivePixFee, setReceivePixFee] = useState(0);
+  const [minReceivePixFee, setMinReceivePixFee] = useState(0);
   const [tedFee, setTedFee] = useState(0);
   const [boletoFee, setBoletoFee] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,7 @@ export default function EditPartners({jwt, user}) {
       card_limit: Number(cardLimit),
       pix_fee: Number(pixFee),
       receive_pix_fee: Number(receivePixFee),
+      min_receive_pix_fee: Number(minReceivePixFee),
       ted_fee: Number(tedFee),
       boleto_fee: Number(boletoFee),
     }
@@ -89,6 +91,7 @@ export default function EditPartners({jwt, user}) {
         setTransactionLimit(response.data.transaction_limit);
         setCardLimit(response.data.card_limit);
         setPixFee(response.data.pix_fee);
+        setMinReceivePixFee(response.data.min_receive_pix_fee);
         setReceivePixFee(response.data.receive_pix_fee);
         setTedFee(response.data.ted_fee);
         setBoletoFee(response.data.boleto_fee);
@@ -205,6 +208,24 @@ export default function EditPartners({jwt, user}) {
                     onChange={(valueString) => setCardLimit(valueString)}
                     value={cardLimit}
                     precision={0}
+                    borderColor='#20242D'
+                    borderRadius={5}
+                    _placeholder={{
+                        fontSize: '18',
+                        color: '#20242D'
+                    }}
+                  >
+                    <NumberInputField />                      
+                  </NumberInput>                                                     
+                </Box>
+                <Box mb='2'>
+                  <Text htmlFor='name' mb='2'>
+                    Taxa mínima de entrada do PIX (R$)
+                  </Text>
+                  <NumberInput
+                    onChange={(valueString) => setMinReceivePixFee(valueString)}
+                    value={minReceivePixFee}
+                    precision={2}
                     borderColor='#20242D'
                     borderRadius={5}
                     _placeholder={{

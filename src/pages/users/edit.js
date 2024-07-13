@@ -29,6 +29,7 @@ export default function EditUsers({jwt, user}) {
   const [cardLimit, setCardLimit] = useState(0);
   const [pixFee, setPixFee] = useState(0);
   const [receivePixFee, setReceivePixFee] = useState(0);
+  const [minReceivePixFee, setMinReceivePixFee] = useState(0);
   const [tedFee, setTedFee] = useState(0);
   const [boletoFee, setBoletoFee] = useState(0);
   const [planId, setPlanId] = useState(null);
@@ -227,6 +228,7 @@ export default function EditUsers({jwt, user}) {
         setCardLimit(responsePlan.data.card_limit)
         setPixFee(responsePlan.data.pix_fee)
         setReceivePixFee(responsePlan.data.receive_pix_fee)
+        setMinReceivePixFee(responsePlan.data.min_receive_pix_fee)
         setTedFee(responsePlan.data.ted_fee)
         setBoletoFee(responsePlan.data.boleto_fee)
         setPlanId(responsePlan.data.id)
@@ -239,6 +241,7 @@ export default function EditUsers({jwt, user}) {
       setCardLimit(0);
       setPixFee(0);
       setReceivePixFee(0);
+      setMinReceivePixFee(0);
       setTedFee(0);
       setBoletoFee(0);
       setPlanId(null);
@@ -258,6 +261,7 @@ export default function EditUsers({jwt, user}) {
       card_limit: Number(cardLimit),
       pix_fee: Number(pixFee),
       receive_pix_fee: Number(receivePixFee),
+      min_receive_pix_fee: Number(minReceivePixFee),
       ted_fee: Number(tedFee),
       boleto_fee: Number(boletoFee),
       plan_id: planId
@@ -321,6 +325,7 @@ export default function EditUsers({jwt, user}) {
           setCardLimit(responseAccount.data.config.card_limit)
           setPixFee(responseAccount.data.config.pix_fee)
           setReceivePixFee(responseAccount.data.config.receive_pix_fee)
+          setMinReceivePixFee(responseAccount.data.config.min_receive_pix_fee)
           setTedFee(responseAccount.data.config.ted_fee)
           setBoletoFee(responseAccount.data.config.boleto_fee)
           setPlanId(responseAccount.data.config.plan_id)
@@ -341,6 +346,7 @@ export default function EditUsers({jwt, user}) {
       setCardLimit(0);
       setPixFee(0);
       setReceivePixFee(0);
+      setMinReceivePixFee(0);
       setTedFee(0);
       setBoletoFee(0);
       setPlanId(null);
@@ -690,6 +696,25 @@ export default function EditUsers({jwt, user}) {
                       onChange={(valueString) => setCardLimit(valueString)}
                       value={cardLimit}
                       precision={0}
+                      isDisabled={planId == null ? false : true}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa mínima de entrada do PIX (R$)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setMinReceivePixFee(valueString)}
+                      value={minReceivePixFee}
+                      precision={2}
                       isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
                       borderRadius={5}

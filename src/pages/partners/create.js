@@ -13,6 +13,7 @@ export default function CreatePartners({jwt, user}) {
   const [cardLimit, setCardLimit] = useState(0);
   const [pixFee, setPixFee] = useState(0);
   const [receivePixFee, setReceivePixFee] = useState(0);
+  const [minReceivePixFee, setMinReceivePixFee] = useState(0);
   const [tedFee, setTedFee] = useState(0);
   const [boletoFee, setBoletoFee] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,7 @@ export default function CreatePartners({jwt, user}) {
       card_limit: Number(cardLimit),
       pix_fee: Number(pixFee),
       receive_pix_fee: Number(receivePixFee),
+      min_receive_pix_fee: Number(minReceivePixFee),
       ted_fee: Number(tedFee),
       boleto_fee: Number(boletoFee),
     }
@@ -53,7 +55,17 @@ export default function CreatePartners({jwt, user}) {
           duration: 5000,
           isClosable: true,
         });
-        navigation(`/plans/edit/${partner.id}`);
+        
+        setName('');
+        setAmount(0);
+        setPixLimit(0);
+        setTransactionLimit(0);
+        setCardLimit(0);
+        setPixFee(0);
+        setReceivePixFee(0);
+        setMinReceivePixFee(0);
+        setTedFee(0);
+        setBoletoFee(0);
       }
 
       setLoading(false);
@@ -166,6 +178,24 @@ export default function CreatePartners({jwt, user}) {
                       onChange={(valueString) => setCardLimit(valueString)}
                       value={cardLimit}
                       precision={0}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa mínima de entrada do PIX (R$)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setMinReceivePixFee(valueString)}
+                      value={minReceivePixFee}
+                      precision={2}
                       borderColor='#20242D'
                       borderRadius={5}
                       _placeholder={{
