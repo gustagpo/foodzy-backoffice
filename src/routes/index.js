@@ -10,6 +10,8 @@ import EditClients from '../pages/clients/edit';
 import Partners from '../pages/partners';
 import EditPartners from '../pages/partners/edit';
 import CreatePartners from '../pages/partners/create';
+import Cards from '../pages/cards';
+import StatementCards from '../pages/cards/statement';
 import Accounting from "../pages/accounting";
 import Login from '../pages/Login';
 import Config from '../pages/Config';
@@ -74,6 +76,16 @@ function Index(props) {
             <Route path="/accounting" element={
                 <Protected isAuthenticated={isAuthenticated}>
                     <Accounting jwt={jwt} user={user} />
+                </Protected>
+            }/>
+            <Route path="/cards" element={
+                <Protected isAuthenticated={isAuthenticated}>
+                    <Cards jwt={jwt} user={user} />
+                </Protected>
+            }/>
+            <Route path="/cards/:id" element={
+                <Protected isAuthenticated={isAuthenticated}>
+                    <StatementCards jwt={jwt} user={user} />
                 </Protected>
             }/>
             <Route path="/plans" element={

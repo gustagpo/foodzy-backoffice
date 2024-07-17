@@ -1,39 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link, Skeleton } from '@chakra-ui/react';
-import { RiAddLine, RiPencilLine } from 'react-icons/ri';
+import { Input, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link, Skeleton } from '@chakra-ui/react';
+import { RiReceiptLine } from 'react-icons/ri';
+import { MdCheck, MdBlock } from "react-icons/md";
 import api from '../../services/api';
-import { formatDate } from '../../utils/format';
+import { formatDate, formatValue } from '../../utils/format';
 
 import { Link as RouterLink} from 'react-router-dom';
 
 import AuthLayout from '../_layouts/AuthLayout';
 import Pagination from '../../components/Pagination';
 
-export default function AccountList({ jwt, user }) {
-    const [plan, setPlan] = useState('');
-    const [date, setDate] = useState('');
-    const [users, setUsers] = useState([]);
+export default function CardList({ jwt, user }) {
+    const [at, setAt] = useState(null);
+    const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const STATUS_PAYMENTS = {
-        'false': "Inativo",        
-        'true': "Ativo",        
-      };
+    async function handleAt(){
+        loadData();
+    };
        
     async function loadData(){
         try{
-            const responseUsers = await api.post('/bo/list-account', {}, {
+            const response = await api.post(`/bo/list-card`, {
+                'at': at
+            } , {
                 headers: {
                 'Authorization': 'Bearer ' + jwt
                 }
             });
         
-            if(responseUsers.data){
-                setUsers(responseUsers.data);
+            if(response.data){
+                setCards(response.data);
+                setLoading(false);
             };
-            setLoading(false);
         } catch(err) {
-            setUsers([]);
+            setCards([]);
             setLoading(true);
         }
     }
@@ -48,39 +49,26 @@ export default function AccountList({ jwt, user }) {
         <Flex display="flex" w='100%' flexDirection="column">
             <Box w='100%' mb={16} bg='gray.100' p='8'>
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Contas Cadastradas</Heading>
-                    
-                    {/* { plan && plan.type == 1 && plan.plan_type == 7 ?
-                        users && users.length < 4 ?
-                        <Link as={RouterLink} to='/users/create' display="flex" algin="center">
-                            <Button
-                            as='a'
-                            size='sm'
-                            fontSize='sm'
-                            colorScheme='green'
-                            leftIcon={<Icon
-                            as={RiAddLine}
-                            />}
-                            >
-                            Criar novo dependente
-                            </Button>
-                        </Link>
-                        : 
-                        <></>
-                    :
-                        <></>
-                    } */}
+                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Cartões Cadastrados</Heading>
+                    <Flex align='end'>
+                        <Flex direction='column' align='left' mr='4'>
+                            <Text>Filtrar por Conta</Text>
+                            <Input borderColor='black' size='md' type='text' value={at} onChange={(e) => setAt(e.target.value)}/>
+                        </Flex>
+                        <Button type='submit' onClick={handleAt} colorScheme='red'>Filtrar</Button>
+                    </Flex>
 
                 </Flex>
                     
                 <Table colorScheme='gray.200'>
                     <Thead>
                         <Tr>
-                            <Th>Conta</Th>
-                            <Th>Data de cadastro</Th>
-                            <Th>Documento</Th>
-                            <Th>Status Conta</Th>
-                            <Th>Acesso</Th>
+                            <Th>Cartão</Th>
+                            <Th>Final</Th>
+                            <Th>Status</Th>
+                            <Th>Saldo</Th>
+                            <Th>Holder</Th>
+                            <Th>Ações</Th>
                         </Tr>
                     </Thead>
                     { loading ?                     
@@ -101,6 +89,9 @@ export default function AccountList({ jwt, user }) {
                                 <Td>
                                     <Skeleton height='50px' />
                                 </Td>                                                                                              
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                                                                                              
                             </Tr>                                                                                   
                             <Tr>
                                 <Td>
@@ -118,39 +109,50 @@ export default function AccountList({ jwt, user }) {
                                 <Td>
                                     <Skeleton height='50px' />
                                 </Td>                                                                                              
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                                                                                              
                             </Tr>                                                                                   
                         </Tbody>                        
                     :                        
                         <Tbody>                        
-                            {users.map((e) => {
+                            {cards.map((e) => {
                                 return(
                                     <Tr>
                                         <Td>
+                                            {e.display_name}
+                                        </Td>
+                                        <Td>
+                                            {e.number.split(" ")[3]}
+                                        </Td>
+                                        <Td>
+                                            {e.status == 'active' ? <Icon boxSize={6} color={'green'} as={MdCheck} /> : <Icon boxSize={6} color={'red'} as={MdBlock} />}
+                                        </Td>
+                                        <Td>
+                                            {formatValue(e.balance)}
+                                        </Td>
+                                        <Td>
                                             <Box>
-                                                <Text fontWeight='bold'>{e.company_name}</Text>
-                                                <Text fontWeight='sm'>{e.account_token}</Text>
+                                                <Text fontWeight='bold'>{e.holder_name}</Text>
+                                                <Text fontWeight='sm'>{e.holder_tax_id}</Text>
                                             </Box>
                                         </Td>
                                         <Td>
-                                            {formatDate(e.createdAt)}
-                                        </Td>
-                                        <Td>
-                                            {e.document}
-                                        </Td>
-                                        <Td>
-                                            {STATUS_PAYMENTS[e.status]}
-                                        </Td>
-                                        <Td>
                                             <HStack spacing='2'>
-                                                <Link as={RouterLink} to={`/clients/${e.account_token}`} display="flex" algin="center">
+                                                {e.status == 'active' ? 
+                                                    <Button type='submit' size='sm' fontSize='sm' colorScheme='red' leftIcon={<Icon as={MdBlock} />} onClick={() => {}}>Bloquear</Button>
+                                                : 
+                                                    <Button type='submit' size='sm' fontSize='sm' colorScheme='green' leftIcon={<Icon as={MdCheck} />} onClick={() => {}}>Liberar</Button>
+                                                }
+                                                <Link as={RouterLink} to={`/cards/${e.id}`} display="flex" algin="center">
                                                     <Button
                                                     as='a'
                                                     size='sm'
                                                     fontSize='sm'
-                                                    colorScheme='red'
-                                                    leftIcon={<Icon as={RiPencilLine} />}
+                                                    colorScheme='blue'
+                                                    leftIcon={<Icon as={RiReceiptLine} />}
                                                     >
-                                                        BO Conta
+                                                        Ver Extrato
                                                     </Button>
                                                 </Link>
                                             </HStack>

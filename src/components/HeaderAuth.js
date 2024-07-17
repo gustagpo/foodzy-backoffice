@@ -51,15 +51,15 @@ function Header(props) {
               <Link as={RouterLink} to='/users' display="flex" algin="center">
                 <Text>Usuários</Text>
               </Link>
+              <Link as={RouterLink} to='/cards' display="flex" algin="center">
+                <Text>Cartões</Text>
+              </Link>
               <Link as={RouterLink} to='/plans' display="flex" algin="center">
                 <Text>Planos</Text>
               </Link>
               <Link as={RouterLink} to='/accounting' display="flex" algin="center">
                 <Text>Contabilidade</Text>
-              </Link>
-              {/* <Link as={RouterLink} to='/exams' display="flex" algin="center">
-                <Text>Resultado de Exames</Text>
-              </Link> */}              
+              </Link>             
             </HStack>
             <Link as={RouterLink} to='/config' display="flex" algin="center">
               <Flex align="center" mr="4">

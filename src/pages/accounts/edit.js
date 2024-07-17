@@ -11,7 +11,7 @@ import { formatDate, formatValue } from '../../utils/format';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
-export default function EditUsers({jwt, user}) {
+export default function EditAccount({jwt, user}) {
   const { at } = useParams();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);

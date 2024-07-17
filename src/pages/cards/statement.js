@@ -10,29 +10,17 @@ import {format, subDays} from 'date-fns';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
-export default function AccountStatement({ jwt, user }) {
-    const { at } = useParams();
+export default function CardStatement({ jwt, user }) {
+    const { id } = useParams();
     const [loading, setLoading] = useState(true);
-    const [balance, setBalance] = useState(0);
+    const [card, setCard] = useState({});
     const [statement, setStatement] = useState([]);
-    const [select, setSelect] = useState(1000);
-    const [initDate, setInitDate] = useState(format(subDays(Date.now(), 30), 'yyyy-MM-dd'));
-    const [endDate, setEndDate] = useState(format(Date.now(), 'yyyy-MM-dd'));
-
-    const STATUS_PAYMENTS = {
-        'false': "Inativo",        
-        'true': "Ativo",        
-      };
        
     async function loadData(){
         setLoading(true);
         try{      
-            const responseAccount = await api.post(`/bo/transactions-by-period`, {
-                'at': at,
-                'pageNumber': 1,
-                'pageSize': select,
-                'startDate': initDate,
-                'endDate': endDate
+            const responseAccount = await api.post(`/bo/statement-card`, {
+                'cardId': id,
             }, {
                 headers: { 
                     'Authorization': 'Bearer ' + jwt,
@@ -40,8 +28,7 @@ export default function AccountStatement({ jwt, user }) {
             });
         
             if(responseAccount.data){
-                setStatement(responseAccount.data.statement);
-                setBalance(responseAccount.data.balance);
+                setStatement(responseAccount.data);
                 setLoading(false);
             };
         } catch(err) {
@@ -49,12 +36,29 @@ export default function AccountStatement({ jwt, user }) {
         }
     };
 
-    async function handleDate(){
-        loadData();
+    async function loadCard(){
+        setLoading(true);
+        try{      
+            const response = await api.post(`/bo/get-card`, {
+                'cardId': id,
+            }, {
+                headers: { 
+                    'Authorization': 'Bearer ' + jwt,
+                }      
+            });
+        
+            if(response.data){
+                setCard(response.data);
+                setLoading(false);
+            };
+        } catch(err) {
+            setCard({});
+        }
     };
     
     useEffect(() => {
-        loadData()
+        loadCard();
+        loadData();
     }, [jwt]);
 
 
@@ -62,42 +66,31 @@ export default function AccountStatement({ jwt, user }) {
     <AuthLayout>
         <Flex display="flex" w='100%' flexDirection="column">
             <Box w='100%' mb={16} bg='gray.100' p='8' >
-                <Flex mb='4' justify='space-between' align='center'>
-                    <Heading size='lg' fontWeight='normal'>Extrato da Conta: {at}</Heading>
-                    <Heading size='lg' fontWeight='normal'>Saldo: {formatValue(balance)}</Heading>
-                    <Link as={RouterLink} to={`/clients/${at}`} display="flex" algin="center" mr={2}>
-                        <Button colorScheme='blackAlpha'>Voltar a Conta</Button>
-                    </Link>                        
-                </Flex>
-                <Flex mb='4' justify='center' align='end'>
-                    <Flex direction='column' align='left' mr='4'>
-                        <Text>Quantidade</Text>
-                        <Select borderColor='black' size='md' value={select} onChange={(e) => setSelect(e.target.value)}>
-                            <option value={1000}>1.000</option>
-                            <option value={5000}>5.000</option>
-                            <option value={10000}>10.000</option>
-                        </Select>
+                { loading ? 
+                    <Flex mb='8' justify='space-between' align='center'>
+                        <Heading size='lg' fontWeight='normal'>Extrato do Cartão: </Heading>
+                        <Heading size='lg' fontWeight='normal'>Saldo: </Heading>
+                        <Link as={RouterLink} to={`/cards`} display="flex" algin="center" mr={2}>
+                            <Button colorScheme='blackAlpha'>Voltar</Button>
+                        </Link>
                     </Flex>
-                    <Flex direction='column' align='left' mr='4'>
-                        <Text>Data de Inicio</Text>
-                        <Input borderColor='black' size='md' type='date' max={endDate} value={initDate} onChange={(e) => setInitDate(e.target.value)}/>
+                 :
+                    <Flex mb='8' justify='space-between' align='center'>
+                        <Heading size='lg' fontWeight='normal'>Extrato do Cartão: <b>{card.display_name}</b></Heading>
+                        <Heading size='lg' fontWeight='normal'>Saldo: {formatValue(card.balance)}</Heading>
+                        <Link as={RouterLink} to={`/cards`} display="flex" algin="center" mr={2}>
+                            <Button colorScheme='blackAlpha'>Voltar</Button>
+                        </Link>
                     </Flex>
-                    <Flex direction='column' align='left' mr='4'>
-                        <Text>Data Fim</Text>
-                        <Input borderColor='black' size='md' type='date' min={initDate} value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
-                    </Flex>
-                    <Button type='submit' onClick={handleDate} colorScheme='red'>Filtrar</Button>
-                </Flex>
+                 }
                     
                 <Table colorScheme='gray.200'>
                     <Thead>
                         <Tr>
                             <Th></Th>
                             <Th>Descrição / Origem</Th>
-                            <Th>Tipo</Th>
                             <Th>Data - Hora</Th>
                             <Th>Valor</Th>
-                            <Th>Tarifa</Th>
                             <Th>Saldo</Th>
                         </Tr>
                     </Thead>
@@ -119,12 +112,6 @@ export default function AccountStatement({ jwt, user }) {
                                 <Td>
                                     <Skeleton height='50px' />
                                 </Td>                                                                                              
-                                <Td>
-                                    <Skeleton height='50px' />
-                                </Td>                                                                                              
-                                <Td>
-                                    <Skeleton height='50px' />
-                                </Td>
                             </Tr>                                                                                   
                             <Tr>
                                 <Td>
@@ -141,13 +128,7 @@ export default function AccountStatement({ jwt, user }) {
                                 </Td>                               
                                 <Td>
                                     <Skeleton height='50px' />
-                                </Td>                               
-                                <Td>
-                                    <Skeleton height='50px' />
-                                </Td>                                                                                              
-                                <Td>
-                                    <Skeleton height='50px' />
-                                </Td>                                                                                            
+                                </Td>                                                                                                                           
                             </Tr>                                                                                   
                         </Tbody>                        
                     :                        
@@ -166,17 +147,11 @@ export default function AccountStatement({ jwt, user }) {
                                             <Text fontWeight='bold'>{e.description}</Text>
                                         </Td>
                                         <Td>
-                                            {e.method}
-                                        </Td>
-                                        <Td>
                                             {formatCompletDate(e.date) }
                                         </Td>
                                         <Td>
                                             {formatValue(e.amount)}
-                                        </Td>                                        
-                                        <Td>
-                                            {formatValue(e.fee)}
-                                        </Td>                                        
+                                        </Td>                                                                              
                                         <Td>
                                             {formatValue(e.balance)}
                                         </Td>                                        
