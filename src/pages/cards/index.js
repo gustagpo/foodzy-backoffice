@@ -139,11 +139,11 @@ export default function CardList({ jwt, user }) {
                                         </Td>
                                         <Td>
                                             <HStack spacing='2'>
-                                                {e.status == 'active' ? 
+                                                {/* {e.status == 'active' ? 
                                                     <Button type='submit' size='sm' fontSize='sm' colorScheme='red' leftIcon={<Icon as={MdBlock} />} onClick={() => {}}>Bloquear</Button>
                                                 : 
                                                     <Button type='submit' size='sm' fontSize='sm' colorScheme='green' leftIcon={<Icon as={MdCheck} />} onClick={() => {}}>Liberar</Button>
-                                                }
+                                                } */}
                                                 <Link as={RouterLink} to={`/cards/${e.id}`} display="flex" algin="center">
                                                     <Button
                                                     as='a'
