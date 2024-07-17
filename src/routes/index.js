@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector, connect } from "react-redux";
 import Home from '../pages/Home';
-import Users from '../pages/users';
-import EditUsers from '../pages/users/edit';
+import Users from '../pages/accounts';
+import EditUsers from '../pages/accounts/edit';
+import StatementUsers from '../pages/accounts/statement';
 import Clients from '../pages/clients';
 import EditClients from '../pages/clients/edit';
 import Partners from '../pages/partners';
@@ -53,6 +54,11 @@ function Index(props) {
             <Route path="/clients/:at" element={
                 <Protected isAuthenticated={isAuthenticated}>
                     <EditUsers jwt={jwt} user={user}/>
+                </Protected>
+            }/>
+            <Route path="/clients/:at/statement" element={
+                <Protected isAuthenticated={isAuthenticated}>
+                    <StatementUsers jwt={jwt} user={user}/>
                 </Protected>
             }/>
             <Route path="/users" element={

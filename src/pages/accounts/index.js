@@ -46,7 +46,7 @@ export default function UserList({ jwt, user }) {
   return (
     <AuthLayout>
         <Flex display="flex" w='100%' flexDirection="column">
-            <Box w='100%' mb={16} p='50px' bg='gray.100' p='8' >
+            <Box w='100%' mb={16} bg='gray.100' p='8'>
                 <Flex mb='8' justify='space-between' align='center'>
                     <Heading size='lg' color='#E52A24' fontWeight='normal'>Contas Cadastradas</Heading>
                     

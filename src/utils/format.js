@@ -10,3 +10,9 @@ export function formatDate(date) {
 
   return (formatedDate);
 }
+
+export function formatCompletDate(date) {
+  const formatedDate = format(Date.parse(date), 'dd/MM/yyyy HH:mm:ss');
+
+  return (formatedDate);
+}

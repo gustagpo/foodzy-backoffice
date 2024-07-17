@@ -482,9 +482,14 @@ export default function EditUsers({jwt, user}) {
           <Flex justify='space-between'>
             <Heading size='lg' fontWeight='normal'>Conta FX: {at}</Heading>
             <Heading size='lg' fontWeight='normal'>Saldo: {formatValue(balance)}</Heading>
-            <Link as={RouterLink} to='/clients' display="flex" algin="center">
-              <Button colorScheme='blackAlpha'>Voltar</Button>
-            </Link>
+            <Flex>
+              <Link as={RouterLink} to={`/clients/${account.account_token}/statement`} display="flex" algin="center" mr={2}>
+                <Button colorScheme='blackAlpha'>Extrato da Conta</Button>
+              </Link>
+              <Link as={RouterLink} to='/clients' display="flex" algin="center">
+                <Button colorScheme='blackAlpha'>Voltar</Button>
+              </Link>
+            </Flex>
           </Flex>
           <Flex w='100%' mt={8}>
             <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
