@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link, Skeleton } from '@chakra-ui/react';
+import { Input, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, SimpleGrid, Tbody, HStack, Link, Skeleton, Tooltip } from '@chakra-ui/react';
 import { RiReceiptLine } from 'react-icons/ri';
 import { MdCheck, MdBlock } from "react-icons/md";
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import api from '../../services/api';
 import { formatDate, formatValue } from '../../utils/format';
 
@@ -13,6 +14,7 @@ import Pagination from '../../components/Pagination';
 export default function CardList({ jwt, user }) {
     const [at, setAt] = useState(null);
     const [cards, setCards] = useState([]);
+    const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
     async function handleAt(){
@@ -38,9 +40,29 @@ export default function CardList({ jwt, user }) {
             setLoading(true);
         }
     }
+
+    async function loadDash(){
+        try{
+            const response = await api.post(`/bo/dash-card`, {},
+            {
+                headers: {
+                'Authorization': 'Bearer ' + jwt
+                }
+            });
+        
+            if(response.data){
+                setData(response.data);
+                setLoading(false);
+            };
+        } catch(err) {
+            setData([]);
+            setLoading(true);
+        }
+    }
     
     useEffect(() => {
         loadData()
+        loadDash()
     }, [jwt]);
 
 
@@ -49,7 +71,7 @@ export default function CardList({ jwt, user }) {
         <Flex display="flex" w='100%' flexDirection="column">
             <Box w='100%' mb={16} bg='gray.100' p='8'>
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Cartões Cadastrados</Heading>
+                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Cartões Cadastrados</Heading>                    
                     <Flex align='end'>
                         <Flex direction='column' align='left' mr='4'>
                             <Text>Filtrar por Conta</Text>
@@ -59,6 +81,47 @@ export default function CardList({ jwt, user }) {
                     </Flex>
 
                 </Flex>
+                <SimpleGrid flex="1" gap="4" minChildWidth="320px" align="flex-start" mb={4}>
+                    <Box
+                        p="8"
+                        bg="gray.200"
+                        borderRadius={8}
+                    >
+                        <Flex w="100%" align="center" pb="4">
+                            <Text fontSize="lg" mr="1">Quantidade de Cartões</Text>
+                            <Tooltip label="Número de cartões do sistema." hasArrow placement='top' width='36' fontSize={10}>
+                            <InfoOutlineIcon fontSize="sm" color="gray.400"/>
+                            </Tooltip>
+                        </Flex>
+                        { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{data.cards}</Heading> }
+                    </Box>
+                    {/* <Box
+                        p="8"
+                        bg="gray.200"
+                        borderRadius={8}
+                    >
+                        <Flex w="100%" align="center" pb="4">
+                            <Text fontSize="lg" mr="1">Saldo Geral</Text>
+                            <Tooltip label="Valor de saldo em todas os cartões do sistema." hasArrow placement='top' width='36' fontSize={10}>
+                            <InfoOutlineIcon fontSize="sm" color="gray.400"/>
+                            </Tooltip>
+                        </Flex>
+                        { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.balance)}</Heading> }
+                    </Box> */}
+                    <Box
+                        p="8"
+                        bg="gray.200"
+                        borderRadius={8}
+                    >
+                        <Flex w="100%" align="center" pb="4">
+                            <Text fontSize="lg" mr="1">Gasto Total</Text>
+                            <Tooltip label="Valor de compras aprovadas em todas os cartões do sistema." hasArrow placement='top' width='36' fontSize={10}>
+                                <InfoOutlineIcon fontSize="sm" color="gray.400"/>
+                            </Tooltip>
+                        </Flex>                  
+                        { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.purchase)}</Heading> }
+                    </Box>                                      
+                    </SimpleGrid>
                     
                 <Table colorScheme='gray.200'>
                     <Thead>
@@ -67,6 +130,7 @@ export default function CardList({ jwt, user }) {
                             <Th>Final</Th>
                             <Th>Status</Th>
                             <Th>Saldo</Th>
+                            <Th>Gasto</Th>
                             <Th>Holder</Th>
                             <Th>Ações</Th>
                         </Tr>
@@ -92,8 +156,14 @@ export default function CardList({ jwt, user }) {
                                 <Td>
                                     <Skeleton height='50px' />
                                 </Td>                                                                                              
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                                                                                              
                             </Tr>                                                                                   
                             <Tr>
+                                <Td>
+                                    <Skeleton height='50px' />
+                                </Td>                               
                                 <Td>
                                     <Skeleton height='50px' />
                                 </Td>                               
@@ -130,6 +200,9 @@ export default function CardList({ jwt, user }) {
                                         </Td>
                                         <Td>
                                             {formatValue(e.balance)}
+                                        </Td>
+                                        <Td>
+                                            {formatValue(e.purchase)}
                                         </Td>
                                         <Td>
                                             <Box>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link, Skeleton } from '@chakra-ui/react';
+import { Input, Box, Flex, Heading, Button, Icon, Table, Thead, Tr, Th, Td, Text, Checkbox, Tbody, HStack, Link, Skeleton } from '@chakra-ui/react';
 import { RiAddLine, RiPencilLine } from 'react-icons/ri';
 import api from '../../services/api';
 import { formatDate } from '../../utils/format';
@@ -10,6 +10,7 @@ import AuthLayout from '../_layouts/AuthLayout';
 import Pagination from '../../components/Pagination';
 
 export default function AccountList({ jwt, user }) {
+    const [at, setAt] = useState(null);
     const [plan, setPlan] = useState('');
     const [date, setDate] = useState('');
     const [users, setUsers] = useState([]);
@@ -18,11 +19,17 @@ export default function AccountList({ jwt, user }) {
     const STATUS_PAYMENTS = {
         'false': "Inativo",        
         'true': "Ativo",        
-      };
+    };
+
+    async function handleAt(){
+        loadData();
+    };
        
     async function loadData(){
         try{
-            const responseUsers = await api.post('/bo/list-account', {}, {
+            const responseUsers = await api.post('/bo/list-account', {
+                'at': at
+            }, {
                 headers: {
                 'Authorization': 'Bearer ' + jwt
                 }
@@ -49,28 +56,13 @@ export default function AccountList({ jwt, user }) {
             <Box w='100%' mb={16} bg='gray.100' p='8'>
                 <Flex mb='8' justify='space-between' align='center'>
                     <Heading size='lg' color='#E52A24' fontWeight='normal'>Contas Cadastradas</Heading>
-                    
-                    {/* { plan && plan.type == 1 && plan.plan_type == 7 ?
-                        users && users.length < 4 ?
-                        <Link as={RouterLink} to='/users/create' display="flex" algin="center">
-                            <Button
-                            as='a'
-                            size='sm'
-                            fontSize='sm'
-                            colorScheme='green'
-                            leftIcon={<Icon
-                            as={RiAddLine}
-                            />}
-                            >
-                            Criar novo dependente
-                            </Button>
-                        </Link>
-                        : 
-                        <></>
-                    :
-                        <></>
-                    } */}
-
+                    <Flex align='end'>
+                        <Flex direction='column' align='left' mr='4'>
+                            <Text>Filtrar por Conta</Text>
+                            <Input borderColor='black' size='md' type='text' value={at} onChange={(e) => setAt(e.target.value)}/>
+                        </Flex>
+                        <Button type='submit' onClick={handleAt} colorScheme='red'>Filtrar</Button>
+                    </Flex>
                 </Flex>
                     
                 <Table colorScheme='gray.200'>
