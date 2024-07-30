@@ -95,7 +95,7 @@ export default function CardList({ jwt, user }) {
                         </Flex>
                         { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{data.cards}</Heading> }
                     </Box>
-                    {/* <Box
+                    <Box
                         p="8"
                         bg="gray.200"
                         borderRadius={8}
@@ -107,7 +107,7 @@ export default function CardList({ jwt, user }) {
                             </Tooltip>
                         </Flex>
                         { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.balance)}</Heading> }
-                    </Box> */}
+                    </Box>
                     <Box
                         p="8"
                         bg="gray.200"
