@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useToast, Box, Flex, Heading, SimpleGrid, Button, Icon, Table, Thead, Tr, Th, Td, Text, theme, Tbody, HStack, Tooltip, Image } from '@chakra-ui/react';
-import { RiAddLine, RiCloseLine, RiPencilLine } from 'react-icons/ri';
-import { MdBlock, MdCheck } from "react-icons/md";
-import { Link as RouterLink} from 'react-router-dom';
+import { Input, Box, Flex, Skeleton, Heading, SimpleGrid, Button, Icon, Table, Thead, Tr, Th, Td, Text, theme, Tbody, HStack, Tooltip, Image } from '@chakra-ui/react';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import api from '../../services/api';
 import { formatValue, formatDate } from '../../utils/format';
+import {format, subDays} from 'date-fns';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
 export default function PartnerList({jwt, user}) {
     const [data, setData] = useState({});
+    const [startDate, setStartDate] = useState(format(subDays(Date.now(), 30), 'yyyy-MM-dd'));
+    const [endDate, setEndDate] = useState(format(Date.now(), 'yyyy-MM-dd'));
     const [accountData, setAccountData] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    async function handleAt(){
+        loadData();
+    };
+
     async function loadData(){
         try{
-            const response = await api.post('/bo/accounting', {}, {
+            const response = await api.post('/bo/accounting', {
+                'startDate': startDate,
+                'endDate': endDate
+            }, {
                 headers: {
                 'Authorization': 'Bearer ' + jwt
                 }
@@ -44,21 +51,17 @@ export default function PartnerList({jwt, user}) {
             <Box w='100%' flex='1' borderRadius={8} bg='gray.100' p='8' flexDirection='column' mb='20'>
                 <Flex mb='8' justify='space-between' align='center'>
                     <Heading size='lg' color='#E52A24' fontWeight='normal'>Painel Contabil</Heading>
-                    
-                    {/* <Link as={RouterLink} to='/partners/create' display="flex" algin="center">
-                        <Button
-                        as='a'
-                        size='sm'
-                        fontSize='sm'
-                        colorScheme='green'
-                        leftIcon={<Icon
-                        as={RiAddLine}
-                        />}
-                        >
-                        Adicionar novo
-                        </Button>
-                    </Link> */}
-
+                    <Flex align='end'>
+                        <Flex direction='column' align='left' mr='4'>
+                            <Text>Data de Inicio</Text>
+                            <Input borderColor='black' size='md' type='date' max={endDate} value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
+                        </Flex>
+                        <Flex direction='column' align='left' mr='4'>
+                            <Text>Data Fim</Text>
+                            <Input borderColor='black' size='md' type='date' min={startDate} value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
+                        </Flex>                    
+                        <Button type='submit' onClick={handleAt} colorScheme='red'>Filtrar</Button>
+                    </Flex>
                 </Flex>
 
                 <SimpleGrid flex="1" gap="4" minChildWidth="320px" align="flex-start" mb={4}>
@@ -75,7 +78,7 @@ export default function PartnerList({jwt, user}) {
                             </Tooltip>
                         </Flex>
                         <Flex height={160} direction="column" pt="4">
-                            <Heading size='xl'>{formatValue(data.balance)}</Heading>
+                            { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.balance)}</Heading> }
                             <br/>    
                             <Text fontSize='lg'>Contas: {data.accountsCount}</Text>                                                                                                                                          
                             <Text fontSize='lg'>Usuários: {data.users}</Text>                                                                                                                                          
@@ -94,11 +97,11 @@ export default function PartnerList({jwt, user}) {
                         </Tooltip>
                         </Flex>                  
                         <Flex height={160} direction="column">
-                            <Text fontSize='lg'>Taxas</Text>                                                                                                                                          
-                            <Heading size='lg'>{formatValue(data.feeAmount)}</Heading>
+                            <Text fontSize='lg'>Taxas</Text>
+                            { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.feeAmount)}</Heading> }
                             <br/>    
-                            <Text fontSize='lg'>Mensalidades</Text>                                                                                                                                          
-                            <Heading size='lg'>{formatValue(data.chargeAmount)}</Heading>                                                                                                                                                          
+                            <Text fontSize='lg'>Mensalidades</Text>
+                            { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.chargeAmount)}</Heading> }
                         </Flex>
                     </Box>
                     <Box
@@ -114,11 +117,11 @@ export default function PartnerList({jwt, user}) {
                             </Tooltip>
                         </Flex>
                         <Flex height={160} direction="column">
-                            <Text fontSize='lg'>Taxas pagas em Pix [Bass]</Text>                                                                                                                                          
-                            <Heading size='lg'>{formatValue(data.pixAmount)}</Heading>
+                            <Text fontSize='lg'>Taxas pagas em Pix [Bass]</Text>
+                            { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.pixAmount)}</Heading> }
                             <br/>    
-                            <Text fontSize='lg'>Taxas pagas em Pix [API]</Text>                                                                                                                                          
-                            <Heading size='lg'>{formatValue(data.apiAmount)}</Heading>                                                                                                                                                          
+                            <Text fontSize='lg'>Taxas pagas em Pix [API]</Text>
+                            { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.apiAmount)}</Heading> }                                                                                                                                           
                         </Flex>
                     </Box>                                        
                 </SimpleGrid>

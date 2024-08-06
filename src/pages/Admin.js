@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Heading, SimpleGrid, Text, theme, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Heading, SimpleGrid, Text, theme, Tooltip, Skeleton } from '@chakra-ui/react';
 import Chart from 'react-apexcharts';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import api from '../services/api';
@@ -96,7 +96,7 @@ export default function Home({ jwt, user }) {
                   </Tooltip>
                 </Flex>                  
                 <Flex height={160} direction="column" pt="4">
-                  <Heading size='xl'>{formatValue(data.balance)}</Heading>
+                  { loading ? <Skeleton height='50px' /> : <Heading size='xl'>{formatValue(data.balance)}</Heading> }
                   <br/>    
                   <Text fontSize='lg'>Contas: {data.accounts}</Text>                                                                                                                                          
                   <Text fontSize='lg'>Usuários: {data.users}</Text>                                                                                                                                          
@@ -115,11 +115,11 @@ export default function Home({ jwt, user }) {
                   </Tooltip>
                 </Flex>
                 <Flex height={160} direction="column">
-                  <Text fontSize='lg'>IN (entrada)</Text>                                                                                                                                          
-                  <Heading size='lg'>{formatValue(data.inAmount)}</Heading>
+                  <Text fontSize='lg'>IN (entrada)</Text>
+                  { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.inAmount)}</Heading> }
                   <br/>    
-                  <Text fontSize='lg'>OUT (saída)</Text>                                                                                                                                          
-                  <Heading size='lg'>{formatValue(data.outAmount)}</Heading>                                                                                                                                                          
+                  <Text fontSize='lg'>OUT (saída)</Text>
+                  { loading ? <Skeleton height='50px' /> : <Heading size='lg'>{formatValue(data.outAmount)}</Heading> }                                                                                                               
                 </Flex>
               </Box>
               <Box
@@ -135,10 +135,10 @@ export default function Home({ jwt, user }) {
                     </Tooltip>
                   </Flex>
                   <Flex height={160} direction="column" pt="4">
-                    <Heading size='xl'>{formatValue(data.feeAmount)}</Heading>
+                    { loading ? <Skeleton height='50px' /> : <Heading size='xl'>{formatValue(data.feeAmount)}</Heading> }
                     <br/>    
-                    <Text fontSize='lg'>PIX (in): {formatValue(data.depositAmount)}</Text>                                                                                                                                          
-                    <Text fontSize='lg'>PIX (out): {formatValue(data.pixAmount)}</Text>                                                                                                                                          
+                    <Text fontSize='lg'>PIX (in): { loading ? <Skeleton /> : formatValue(data.depositAmount)}</Text>                                                                                                                                          
+                    <Text fontSize='lg'>PIX (out): { loading ? <Skeleton /> : formatValue(data.pixAmount)}</Text>                                                                                                                                          
                 </Flex>
               </Box>
               <Box

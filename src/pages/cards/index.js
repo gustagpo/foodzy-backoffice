@@ -5,6 +5,7 @@ import { MdCheck, MdBlock } from "react-icons/md";
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 import api from '../../services/api';
 import { formatDate, formatValue } from '../../utils/format';
+import {format, subDays} from 'date-fns';
 
 import { Link as RouterLink} from 'react-router-dom';
 
@@ -13,18 +14,23 @@ import Pagination from '../../components/Pagination';
 
 export default function CardList({ jwt, user }) {
     const [at, setAt] = useState(null);
+    const [startDate, setStartDate] = useState(format(subDays(Date.now(), 30), 'yyyy-MM-dd'));
+    const [endDate, setEndDate] = useState(format(Date.now(), 'yyyy-MM-dd'));
     const [cards, setCards] = useState([]);
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
     async function handleAt(){
         loadData();
+        loadDash()
     };
        
     async function loadData(){
         try{
             const response = await api.post(`/bo/list-card`, {
-                'at': at
+                'at': at,
+                'startDate': startDate,
+                'endDate': endDate
             } , {
                 headers: {
                 'Authorization': 'Bearer ' + jwt
@@ -43,7 +49,10 @@ export default function CardList({ jwt, user }) {
 
     async function loadDash(){
         try{
-            const response = await api.post(`/bo/dash-card`, {},
+            const response = await api.post(`/bo/dash-card`, {
+                'startDate': startDate,
+                'endDate': endDate
+            },
             {
                 headers: {
                 'Authorization': 'Bearer ' + jwt
@@ -71,8 +80,16 @@ export default function CardList({ jwt, user }) {
         <Flex display="flex" w='100%' flexDirection="column">
             <Box w='100%' mb={16} bg='gray.100' p='8'>
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Cartões Cadastrados</Heading>                    
+                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Cartões Cadastrados</Heading>
                     <Flex align='end'>
+                        <Flex direction='column' align='left' mr='4'>
+                            <Text>Data de Inicio</Text>
+                            <Input borderColor='black' size='md' type='date' max={endDate} value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
+                        </Flex>
+                        <Flex direction='column' align='left' mr='4'>
+                            <Text>Data Fim</Text>
+                            <Input borderColor='black' size='md' type='date' min={startDate} value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
+                        </Flex>                    
                         <Flex direction='column' align='left' mr='4'>
                             <Text>Filtrar por Conta</Text>
                             <Input borderColor='black' size='md' type='text' value={at} onChange={(e) => setAt(e.target.value)}/>
