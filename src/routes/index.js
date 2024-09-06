@@ -20,7 +20,7 @@ import Protected from "../components/Protected";
 
 function Index(props) {
     // const jwt = useSelector((state) => state.jwt);
-    const { isAuthenticated, jwt, user } = props.auth;
+    const { isAuthenticated, jwt, user, config } = props.auth;
     console.log(isAuthenticated)
 
     // const [isAuthenticated, setisAuthenticated] = useState(jwt !== null);
@@ -40,72 +40,72 @@ function Index(props) {
             
             <Route path="/" element={
                 <Protected isAuthenticated={isAuthenticated}>
-                    <Admin jwt={jwt} user={user}/> 
+                    <Admin jwt={jwt} user={user} config={config}/> 
                 </Protected>
             }/>
             <Route path="/home" element={
                 <Protected isAuthenticated={isAuthenticated}>
-                    <Home jwt={jwt} user={user}/>
+                    <Home jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/clients" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <Users jwt={jwt} user={user} />
+                <Protected isAuthenticated={isAuthenticated && config.account}>
+                    <Users jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/clients/:at" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <EditUsers jwt={jwt} user={user}/>
+                <Protected isAuthenticated={isAuthenticated && config.account}>
+                    <EditUsers jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/clients/:at/statement" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <StatementUsers jwt={jwt} user={user}/>
+                <Protected isAuthenticated={isAuthenticated && config.account}>
+                    <StatementUsers jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/users" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <Clients jwt={jwt} user={user} />
+                <Protected isAuthenticated={isAuthenticated && config.users}>
+                    <Clients jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/users/:id" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <EditClients jwt={jwt} user={user}/>
+                <Protected isAuthenticated={isAuthenticated && config.users}>
+                    <EditClients jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/accounting" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <Accounting jwt={jwt} user={user} />
+                <Protected isAuthenticated={isAuthenticated && config.accounting}>
+                    <Accounting jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/cards" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <Cards jwt={jwt} user={user} />
+                <Protected isAuthenticated={isAuthenticated && config.card}>
+                    <Cards jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/cards/:id" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <StatementCards jwt={jwt} user={user} />
+                <Protected isAuthenticated={isAuthenticated && config.card}>
+                    <StatementCards jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/plans" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <Partners jwt={jwt} user={user} />
+                <Protected isAuthenticated={isAuthenticated && config.plan}>
+                    <Partners jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/plans/create" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <CreatePartners jwt={jwt} user={user}/>
+                <Protected isAuthenticated={isAuthenticated && config.plan}>
+                    <CreatePartners jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/plans/edit/:id" element={
-                <Protected isAuthenticated={isAuthenticated}>
-                    <EditPartners jwt={jwt} user={user}/>
+                <Protected isAuthenticated={isAuthenticated && config.plan}>
+                    <EditPartners jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="/config" element={
                 <Protected isAuthenticated={isAuthenticated}>
-                    <Config jwt={jwt} user={user} />
+                    <Config jwt={jwt} user={user} config={config}/>
                 </Protected>
             }/>
             <Route path="*" element={<p>There's nothing here: 404!</p>} />

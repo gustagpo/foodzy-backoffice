@@ -2,6 +2,7 @@ const initialState = {
     jwt: null,
     isAuthenticated: false,
     user: null,
+    config: null,
     // Outros campos de estado relacionados à autenticação
 
   };
@@ -13,14 +14,16 @@ const initialState = {
           ...state,
           jwt: action.payload.jwt,
           isAuthenticated: true,
-          user: action.payload.user
+          user: action.payload.user,
+          config: action.payload.config,
         };
       case 'CLEAR_JWT':
         return {
           ...state,
           jwt: null,
           isAuthenticated: false,
-          user: null
+          user: null,
+          config: null
         };
         
       // case 'GET_JWT':

@@ -11,7 +11,7 @@ import { formatDate, formatValue } from '../../utils/format';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
-export default function EditAccount({jwt, user}) {
+export default function EditAccount({jwt, config}) {
   const { at } = useParams();
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export default function EditAccount({jwt, user}) {
   const [balance, setBallance] = useState('');
   const [account, setAccount] = useState({});
   const [docs, setDocs] = useState([]);
-  const [config, setConfig] = useState({});
+  const [configAcc, setConfig] = useState({});
   const [admin, setAdmin] = useState({});
   const [users, setUsers] = useState([]);
   const [amount, setAmount] = useState(0);
@@ -568,48 +568,52 @@ export default function EditAccount({jwt, user}) {
                   </Text>                   
                 </CardBody>                  
               </VStack>
-              <VStack>
-                <CardBody>
-                  <Text fontWeight='bold' mb='2'>Status da Conta</Text>                  
-                  <FormControl display='flex' alignItems='center'>
-                    <Text htmlFor='status-account' mb='0'>
-                      Inativo
-                    </Text>
-                    <Switch 
-                      id='status-account'
-                      colorScheme='red'
-                      mx='2'
-                      size='lg'
-                      isChecked={statusAccount}
-                      onChange={(e) => handleStatusAccount(e.target.checked)}
-                    />
-                    <Text htmlFor='status-account' mb='0'>
-                      Aprovado
-                    </Text>
-                  </FormControl>
-                  <br/>         
-                  <Text fontWeight='bold' mb='2'>Status dos Documentos</Text>                  
-                  <FormControl display='flex' alignItems='center'>
-                    <Text htmlFor='status-account' mb='0'>
-                      Pendente
-                    </Text>
-                    <Switch 
-                      id='status-account'
-                      colorScheme='red'
-                      mx='2'
-                      size='lg'
-                      isChecked={statusDocument}
-                      onChange={(e) => handleStatusDocument(e.target.checked)}
-                    />
-                    <Text htmlFor='status-account' mb='0'>
-                      Aprovados
-                    </Text>
-                  </FormControl>
-                  <Flex mt='6'>                    
-                    <Button type='submit' onClick={handleAccountSecret} colorScheme='red'>Enviar Account Secret</Button>
-                  </Flex>         
-                </CardBody>
-              </VStack>                
+              { config.account_approval ?
+                <VStack>
+                  <CardBody>
+                    <Text fontWeight='bold' mb='2'>Status da Conta</Text>                  
+                    <FormControl display='flex' alignItems='center'>
+                      <Text htmlFor='status-account' mb='0'>
+                        Inativo
+                      </Text>
+                      <Switch 
+                        id='status-account'
+                        colorScheme='red'
+                        mx='2'
+                        size='lg'
+                        isChecked={statusAccount}
+                        onChange={(e) => handleStatusAccount(e.target.checked)}
+                      />
+                      <Text htmlFor='status-account' mb='0'>
+                        Aprovado
+                      </Text>
+                    </FormControl>
+                    <br/>         
+                    <Text fontWeight='bold' mb='2'>Status dos Documentos</Text>                  
+                    <FormControl display='flex' alignItems='center'>
+                      <Text htmlFor='status-account' mb='0'>
+                        Pendente
+                      </Text>
+                      <Switch 
+                        id='status-account'
+                        colorScheme='red'
+                        mx='2'
+                        size='lg'
+                        isChecked={statusDocument}
+                        onChange={(e) => handleStatusDocument(e.target.checked)}
+                      />
+                      <Text htmlFor='status-account' mb='0'>
+                        Aprovados
+                      </Text>
+                    </FormControl>
+                    <Flex mt='6'>                    
+                      <Button type='submit' onClick={handleAccountSecret} colorScheme='red'>Enviar Account Secret</Button>
+                    </Flex>         
+                  </CardBody>
+                </VStack>                
+              : 
+                <></>
+              }
             </Card>
           </Flex>                    
           <Flex w='100%' mt={8}>
@@ -724,111 +728,29 @@ export default function EditAccount({jwt, user}) {
               </Accordion>                                          
             </Card>
           </Flex>
-          <Flex w='100%' mt={8}>
-            <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
-              <CardBody justify='center'>
-                <Heading size='lg' fontWeight='normal' textAlign='center' mb='4'>Configurações da Conta</Heading>
-                <Text htmlFor='name' mb='2'>
-                  Plano de Conta
-                </Text>                  
-                <Select name='plan' id='plan' placeholder='Selecione a opção' mb='8' value={planId} onChange={(e) => handlePlan(e.target.value)}>
-                  { plans && plans.map((p) => {
-                    return(
-                      <option key={p.id} value={p.id} selected={(planId == p.id ? true: false)} >{p.name}</option>
-                    )
-                  })}
-                  <option value='0' selected={planId == null ? true : false}>Personalizado</option>
-                </Select>
-                <Box>
+          { config.account_fee ?
+            <Flex w='100%' mt={8}>
+              <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
+                <CardBody justify='center'>
+                  <Heading size='lg' fontWeight='normal' textAlign='center' mb='4'>Configurações da Conta</Heading>
                   <Text htmlFor='name' mb='2'>
-                    Valor de Manutenção da Conta (mês)
-                  </Text>
-                  <NumberInput
-                    onChange={(valueString) => setAmount(valueString)}
-                    value={amount}
-                    precision={2}
-                    isDisabled={planId == null ? false : true}
-                    borderColor='#20242D'
-                    borderRadius={5}
-                    _placeholder={{
-                        fontSize: '18',
-                        color: '#20242D'
-                    }}
-                  >
-                    <NumberInputField />                      
-                  </NumberInput>                                                     
-                </Box>                  
-              </CardBody>                                               
-              <VStack>
-                <CardBody>
-                  <Box mb='2'>
+                    Plano de Conta
+                  </Text>                  
+                  <Select name='plan' id='plan' placeholder='Selecione a opção' mb='8' value={planId} onChange={(e) => handlePlan(e.target.value)}>
+                    { plans && plans.map((p) => {
+                      return(
+                        <option key={p.id} value={p.id} selected={(planId == p.id ? true: false)} >{p.name}</option>
+                      )
+                    })}
+                    <option value='0' selected={planId == null ? true : false}>Personalizado</option>
+                  </Select>
+                  <Box>
                     <Text htmlFor='name' mb='2'>
-                      Limite de PIX (diário)
+                      Valor de Manutenção da Conta (mês)
                     </Text>
                     <NumberInput
-                      onChange={(valueString) => setPixLimit(valueString)}
-                      value={pixLimit}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />
-                      {/* <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper> */}
-                    </NumberInput>                                                    
-                  </Box>
-                  <Box mb='2'>
-                    <Text htmlFor='name' mb='2'>
-                      Limite de transação (diário por conta)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setTransactionLimit(valueString)}
-                      value={transactionLimit}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                      
-                  </Box>
-                  <Box mb='2'>
-                    <Text htmlFor='name' mb='2'>
-                      Quantidade de cartão (por conta)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setCardLimit(valueString)}
-                      value={cardLimit}
-                      precision={0}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
-                  <Box mb='2'>
-                    <Text htmlFor='name' mb='2'>
-                      Taxa de saída do TEV (reais)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setTevFee(valueString)}
-                      value={tevFee}
+                      onChange={(valueString) => setAmount(valueString)}
+                      value={amount}
                       precision={2}
                       isDisabled={planId == null ? false : true}
                       borderColor='#20242D'
@@ -840,218 +762,308 @@ export default function EditAccount({jwt, user}) {
                     >
                       <NumberInputField />                      
                     </NumberInput>                                                     
-                  </Box>
+                  </Box>                  
+                </CardBody>                                               
+                <VStack>
+                  <CardBody>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Limite de PIX (diário)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setPixLimit(valueString)}
+                        value={pixLimit}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />
+                        {/* <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper> */}
+                      </NumberInput>                                                    
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Limite de transação (diário por conta)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setTransactionLimit(valueString)}
+                        value={transactionLimit}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                      
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Quantidade de cartão (por conta)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setCardLimit(valueString)}
+                        value={cardLimit}
+                        precision={0}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa de saída do TEV (reais)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setTevFee(valueString)}
+                        value={tevFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa de entrada do TEV (%)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setReceiveTevFee(valueString)}
+                        value={receiveTevFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                  </CardBody>                  
+                </VStack>             
+                <VStack>
+                  <CardBody>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa mínima de entrada do PIX (R$)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setMinReceivePixFee(valueString)}
+                        value={minReceivePixFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa de entrada do PIX (%)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setReceivePixFee(valueString)}
+                        value={receivePixFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa de saída do PIX (reais)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setPixFee(valueString)}
+                        value={pixFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa de saída do TED (reais)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setTedFee(valueString)}
+                        value={tedFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Box mb='2'>
+                      <Text htmlFor='name' mb='2'>
+                        Taxa de emissão do Boleto (reais)
+                      </Text>
+                      <NumberInput
+                        onChange={(valueString) => setBoletoFee(valueString)}
+                        value={boletoFee}
+                        precision={2}
+                        isDisabled={planId == null ? false : true}
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                      >
+                        <NumberInputField />                      
+                      </NumberInput>                                                     
+                    </Box>
+                    <Flex mt='8' justify='flex-end'>                    
+                      <Button type='submit' onClick={handleSubmit} colorScheme='whatsapp'>Atualizar</Button>
+                    </Flex>
+                  </CardBody>                  
+                </VStack>             
+              </Card>
+            </Flex>
+           : 
+           <></>
+          }
+          { config.account_workspace ? 
+            <Flex w='100%' mt={8}>
+              <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
+                <CardBody justify='center'>
+                  <Heading size='lg' fontWeight='normal' textAlign='center' mb='4'>Workspace Especial</Heading>
+                  <Text fontWeight='bold' mb='2'>Status</Text>                  
+                  <FormControl display='flex' alignItems='center' mb='4'>
+                    <Text htmlFor='status-account' mb='0'>
+                      Inativo
+                    </Text>
+                    <Switch 
+                      id='status-account'
+                      colorScheme='red'
+                      mx='2'
+                      size='lg'
+                      isChecked={statusWorkspace}
+                      onChange={(e) => setStatusWorkspace(e.target.checked)}
+                    />
+                    <Text htmlFor='status-account' mb='0'>
+                      Ativo
+                    </Text>
+                  </FormControl>
                   <Box mb='2'>
                     <Text htmlFor='name' mb='2'>
-                      Taxa de entrada do TEV (%)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setReceiveTevFee(valueString)}
-                      value={receiveTevFee}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
-                </CardBody>                  
-              </VStack>             
-              <VStack>
-                <CardBody>
+                      Workspace ID
+                    </Text>                                  
+                    <Input 
+                        name='name'
+                        id='name'
+                        type='text'          
+                        disabled={!statusWorkspace}                              
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                        value={workspaceId}
+                        onChange={(event)=> setWorkspaceId(event.target.value)}
+                      />
+                  </Box>                 
+                </CardBody>                                               
+                <CardBody>              
                   <Box mb='2'>
                     <Text htmlFor='name' mb='2'>
-                      Taxa mínima de entrada do PIX (R$)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setMinReceivePixFee(valueString)}
-                      value={minReceivePixFee}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
+                      Chave PIX
+                    </Text>                                  
+                    <Input 
+                        name='name'
+                        id='name'
+                        type='text'
+                        disabled={!statusWorkspace}                                         
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                        value={pixKey}
+                        onChange={(event)=> setPixKey(event.target.value)}
+                      />
+                  </Box>  
                   <Box mb='2'>
                     <Text htmlFor='name' mb='2'>
-                      Taxa de entrada do PIX (%)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setReceivePixFee(valueString)}
-                      value={receivePixFee}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
-                  <Box mb='2'>
-                    <Text htmlFor='name' mb='2'>
-                      Taxa de saída do PIX (reais)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setPixFee(valueString)}
-                      value={pixFee}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
-                  <Box mb='2'>
-                    <Text htmlFor='name' mb='2'>
-                      Taxa de saída do TED (reais)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setTedFee(valueString)}
-                      value={tedFee}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
-                  <Box mb='2'>
-                    <Text htmlFor='name' mb='2'>
-                      Taxa de emissão do Boleto (reais)
-                    </Text>
-                    <NumberInput
-                      onChange={(valueString) => setBoletoFee(valueString)}
-                      value={boletoFee}
-                      precision={2}
-                      isDisabled={planId == null ? false : true}
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                    >
-                      <NumberInputField />                      
-                    </NumberInput>                                                     
-                  </Box>
+                      URL QR Code
+                    </Text>                                  
+                    <Input 
+                        name='name'
+                        id='name'
+                        type='text' 
+                        disabled={!statusWorkspace}                                        
+                        borderColor='#20242D'
+                        borderRadius={5}
+                        _placeholder={{
+                            fontSize: '18',
+                            color: '#20242D'
+                        }}
+                        value={qrCode}
+                        onChange={(event)=> setQrCode(event.target.value)}
+                      />
+                  </Box>  
                   <Flex mt='8' justify='flex-end'>                    
-                    <Button type='submit' onClick={handleSubmit} colorScheme='whatsapp'>Atualizar</Button>
+                    <Button type='submit' onClick={handleWorkspace} colorScheme='whatsapp'>Atualizar</Button>
                   </Flex>
-                </CardBody>                  
-              </VStack>             
-            </Card>
-          </Flex>
-          <Flex w='100%' mt={8}>
-            <Card w='100%' direction={{ base: 'column', sm: 'row' }} justify='space-evenly'>
-              <CardBody justify='center'>
-                <Heading size='lg' fontWeight='normal' textAlign='center' mb='4'>Workspace Especial</Heading>
-                <Text fontWeight='bold' mb='2'>Status</Text>                  
-                <FormControl display='flex' alignItems='center' mb='4'>
-                  <Text htmlFor='status-account' mb='0'>
-                    Inativo
-                  </Text>
-                  <Switch 
-                    id='status-account'
-                    colorScheme='red'
-                    mx='2'
-                    size='lg'
-                    isChecked={statusWorkspace}
-                    onChange={(e) => setStatusWorkspace(e.target.checked)}
-                  />
-                  <Text htmlFor='status-account' mb='0'>
-                    Ativo
-                  </Text>
-                </FormControl>
-                <Box mb='2'>
-                  <Text htmlFor='name' mb='2'>
-                    Workspace ID
-                  </Text>                                  
-                  <Input 
-                      name='name'
-                      id='name'
-                      type='text'          
-                      disabled={!statusWorkspace}                              
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                      value={workspaceId}
-                      onChange={(event)=> setWorkspaceId(event.target.value)}
-                    />
-                </Box>                 
-              </CardBody>                                               
-              <CardBody>              
-                <Box mb='2'>
-                  <Text htmlFor='name' mb='2'>
-                    Chave PIX
-                  </Text>                                  
-                  <Input 
-                      name='name'
-                      id='name'
-                      type='text'
-                      disabled={!statusWorkspace}                                         
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                      value={pixKey}
-                      onChange={(event)=> setPixKey(event.target.value)}
-                    />
-                </Box>  
-                <Box mb='2'>
-                  <Text htmlFor='name' mb='2'>
-                    URL QR Code
-                  </Text>                                  
-                  <Input 
-                      name='name'
-                      id='name'
-                      type='text' 
-                      disabled={!statusWorkspace}                                        
-                      borderColor='#20242D'
-                      borderRadius={5}
-                      _placeholder={{
-                          fontSize: '18',
-                          color: '#20242D'
-                      }}
-                      value={qrCode}
-                      onChange={(event)=> setQrCode(event.target.value)}
-                    />
-                </Box>  
-                <Flex mt='8' justify='flex-end'>                    
-                  <Button type='submit' onClick={handleWorkspace} colorScheme='whatsapp'>Atualizar</Button>
-                </Flex>
-              </CardBody>                                         
-            </Card>
-          </Flex>
+                </CardBody>                                         
+              </Card>
+            </Flex>
+           : 
+           <></>
+          }
           <Flex mt='8' justify='flex-end'>
             <Link as={RouterLink} to='/clients' display="flex" algin="center">
               <Button colorScheme='blackAlpha'>Voltar</Button>

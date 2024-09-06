@@ -49,8 +49,9 @@ export default function Login() {
       if(response.data){
         const token = response.data.token;
         const user = response.data.user;
+        const config = response.data.backoffice;
         if(user) {
-          dispatch(setJWT(token, user));
+          dispatch(setJWT(token, user, config));
           navigation('/');
         } else {
           toast({

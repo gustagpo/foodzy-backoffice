@@ -8,7 +8,7 @@ import { formatDate } from '../../utils/format';
 
 import AuthLayout from '../_layouts/AuthLayout';
 
-export default function PartnerList({jwt, user}) {
+export default function PartnerList({jwt, config}) {
     const [partners, setPartners] = useState([]);
     const toast = useToast();
 
@@ -147,28 +147,32 @@ export default function PartnerList({jwt, user}) {
                                                     Editar
                                                 </Button>
                                             </Link> */}
-
-                                            {e.status == true ? 
-                                                <Button                                            
-                                                    size='sm'
-                                                    fontSize='sm'
-                                                    colorScheme='red'
-                                                    leftIcon={<Icon as={MdBlock} />}
-                                                    onClick={() => deletePartner(e.id)}
-                                                >
-                                                    Bloquear
-                                                </Button>                                            
-                                            : 
-                                                <Button                                            
-                                                    size='sm'
-                                                    fontSize='sm'
-                                                    colorScheme='whatsapp'
-                                                    leftIcon={<Icon as={MdCheck} />}
-                                                    onClick={() => deletePartner(e.id)}
-                                                >
-                                                    Desbloquear
-                                                </Button>                                        
+                                            { config.users_block ? (
+                                             e.status == true ? 
+                                                 <Button                                            
+                                                     size='sm'
+                                                     fontSize='sm'
+                                                     colorScheme='red'
+                                                     leftIcon={<Icon as={MdBlock} />}
+                                                     onClick={() => deletePartner(e.id)}
+                                                 >
+                                                     Bloquear
+                                                 </Button>                                            
+                                             : 
+                                                 <Button                                            
+                                                     size='sm'
+                                                     fontSize='sm'
+                                                     colorScheme='whatsapp'
+                                                     leftIcon={<Icon as={MdCheck} />}
+                                                     onClick={() => deletePartner(e.id)}
+                                                 >
+                                                     Desbloquear
+                                                 </Button> 
+                                             )                                       
+                                             : 
+                                             <></>
                                             }
+
                                             
                                         </HStack>
                                     </Td>

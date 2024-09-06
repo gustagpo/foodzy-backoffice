@@ -1,7 +1,7 @@
-export const setJWT = (jwt, user) => {
+export const setJWT = (jwt, user, config) => {
   return {
     type: 'SET_JWT',
-    payload: {jwt, user}, 
+    payload: {jwt, user, config}, 
     // se for adicionar o user, payload: { jwt, user }
   };
 };

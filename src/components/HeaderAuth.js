@@ -10,7 +10,7 @@ import { FaFacebookF } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 
 function Header(props) {
-  const { user } = props.auth;
+  const { user, config } = props.auth;
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -45,21 +45,45 @@ function Header(props) {
               borderRightWidth={1}
               borderColor="gray.500"
             >
-              <Link as={RouterLink} to='/clients' display="flex" algin="center">
-                <Text>Contas</Text>
-              </Link>
-              <Link as={RouterLink} to='/users' display="flex" algin="center">
-                <Text>Usuários</Text>
-              </Link>
-              <Link as={RouterLink} to='/cards' display="flex" algin="center">
-                <Text>Cartões</Text>
-              </Link>
-              <Link as={RouterLink} to='/plans' display="flex" algin="center">
-                <Text>Planos</Text>
-              </Link>
-              <Link as={RouterLink} to='/accounting' display="flex" algin="center">
-                <Text>Contabilidade</Text>
-              </Link>             
+              { config.account ? 
+                <Link as={RouterLink} to='/clients' display="flex" algin="center">
+                  <Text>Contas</Text>
+                </Link>
+                :
+                <></>
+              }
+              {
+                config.users ?
+                <Link as={RouterLink} to='/users' display="flex" algin="center">
+                  <Text>Usuários</Text>
+                </Link>
+                : 
+                <></>
+              }
+              {
+                config.card ? 
+                <Link as={RouterLink} to='/cards' display="flex" algin="center">
+                  <Text>Cartões</Text>
+                </Link>
+                : 
+                <></>
+              }
+              {
+                config.plan ?
+                <Link as={RouterLink} to='/plans' display="flex" algin="center">
+                  <Text>Planos</Text>
+                </Link>
+                :
+                <></>
+              }
+              {
+                config.accounting ?
+                <Link as={RouterLink} to='/accounting' display="flex" algin="center">
+                  <Text>Contabilidade</Text>
+                </Link>             
+                :
+                <></>
+              }
             </HStack>
             <Link as={RouterLink} to='/config' display="flex" algin="center">
               <Flex align="center" mr="4">
