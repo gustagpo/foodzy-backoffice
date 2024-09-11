@@ -40,23 +40,23 @@ export default function Header2() {
               py="1"
               color="#2D2D2D"
             >
-              <Link href="https://fxbank.com.br" target='blank' display="flex" algin="center">
-                <Text>Site FxBank</Text>
+              <Link href="https://foodzy.com.br" target='blank' display="flex" algin="center">
+                <Text>Site Foodzy</Text>
               </Link>              
-              <Link href="https://app.fxbank.com.br/new_user" target='blank' display="flex" algin="center">
+              <Link href="https://conta.foodzy.com.br/new_user" target='blank' display="flex" algin="center">
                 <Text>Criar conta</Text>
               </Link>              
-              <Link href="https://app.fxbank.com.br" target='blank' display="flex" algin="center">
+              <Link href="https://conta.foodzy.com.br" target='blank' display="flex" algin="center">
                 <Text>Entrar na conta</Text>
               </Link>              
               <Flex alignItems="center">
-                <Text>Siga a FxBank</Text>
-                <Link href="https://www.instagram.com/fxbankbr/" target='blank' ml={2}>
+                <Text>Siga a Foodzy</Text>
+                <Link href="https://www.instagram.com/" target='blank' ml={2}>
                   <Flex bg="#D8E800" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
                       <Icon as={BsInstagram} color="white" boxSize={6}/>
                   </Flex>
                 </Link>
-                <Link href="https://api.whatsapp.com/send/?phone=%2B5512981289405" target='blank' ml={2}>
+                <Link href="https://api.whatsapp.com/send/?phone=5511977621039" target='blank' ml={2}>
                   <Flex bg="#D8E800" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
                       <Icon as={FaWhatsapp} color="white" boxSize={6}/>
                   </Flex>
