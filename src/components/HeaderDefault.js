@@ -38,7 +38,7 @@ export default function Header2() {
               mx="8"
               pr="8"
               py="1"
-              color="#E52A24"
+              color="#2D2D2D"
             >
               <Link href="https://fxbank.com.br" target='blank' display="flex" algin="center">
                 <Text>Site FxBank</Text>
@@ -52,12 +52,12 @@ export default function Header2() {
               <Flex alignItems="center">
                 <Text>Siga a FxBank</Text>
                 <Link href="https://www.instagram.com/fxbankbr/" target='blank' ml={2}>
-                  <Flex bg="#E52A24" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
+                  <Flex bg="#D8E800" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
                       <Icon as={BsInstagram} color="white" boxSize={6}/>
                   </Flex>
                 </Link>
                 <Link href="https://api.whatsapp.com/send/?phone=%2B5512981289405" target='blank' ml={2}>
-                  <Flex bg="#E52A24" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
+                  <Flex bg="#D8E800" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
                       <Icon as={FaWhatsapp} color="white" boxSize={6}/>
                   </Flex>
                 </Link>

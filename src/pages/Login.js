@@ -83,37 +83,11 @@ export default function Login() {
     <DefaultLayout>
         <Flex maxWidth={1300} mb={50}  w="100%" h="100%" p="8" borderRadius={8}>
           <SimpleGrid minChildWidth='500px' spacing='8' w='100%' alignItems={'top'}>
-            <Image src={Card} w="100%"/>
+            <Image src={Card} w="90%"/>
             <Flex as="form" w="80%" flexDirection='column' onSubmit={handleSubmit}>
-              <Heading size='xl' color="#20242D" fontWeight='bold'>Bem Vindo Administração FxBank!</Heading>
+              <Heading size='xl' color="#20242D" fontWeight='bold'>Bem Vindo Administração Foodzy!</Heading>
 
               <VStack spacing='4' mt={8}>
-                {/* <FormControl isRequired>
-                  <InputGroup>
-                    <InputLeftElement pointerEvents='none'>
-                      <Icon as={AiOutlineIdcard} color='#004AAD' />
-                    </InputLeftElement>
-                    <Input
-                        as={InputMask}
-                        name='cpf'
-                        id='cpf'
-                        type='text'
-                        size='md'
-                        color='black'
-                        mask="999.999.999-99"
-                        maskChar={null}
-                        borderColor='#004AAD'
-                        borderRadius={20}
-                        placeholder='CPF'
-                        _placeholder={{
-                            fontSize: '18',
-                            color: '#004AAD'
-                        }}
-                        value={document}
-                        onChange={(event)=> checkCPF(event.target.value)}
-                    />
-                  </InputGroup>
-                </FormControl> */}
                 <FormControl isRequired>
                   <InputGroup>
                     <InputLeftElement pointerEvents='none'>
@@ -162,7 +136,7 @@ export default function Login() {
                 </FormControl>
               </VStack>
               <HStack justify="space-evenly" mt={10} mb={10}>
-                <Button bg='#E52A24' onClick={handleSubmit} color="white" fontSize={18} p="25px 95px" borderRadius={20} >Acessar</Button>
+                <Button bg='#2D2D2D' onClick={handleSubmit} color="white" fontSize={18} p="25px 95px" borderRadius={20} >Acessar</Button>
               </HStack>
 
               <Text size='xl' color="#20242D" fontWeight='bold' textAlign='center'>v.1.0.0 - Todos os direitos reservados</Text>
