@@ -41,65 +41,51 @@ function Header(props) {
               mx="8"
               pr="8"
               py="1"
-              color="#E52A24"
+              color="#2D2D2D"
               borderRightWidth={1}
               borderColor="gray.500"
             >
-              { config.account ? 
+              { 
                 <Link as={RouterLink} to='/clients' display="flex" algin="center">
                   <Text>Contas</Text>
                 </Link>
-                :
-                <></>
               }
-              {
-                config.users ?
+              { 
                 <Link as={RouterLink} to='/users' display="flex" algin="center">
                   <Text>Usuários</Text>
                 </Link>
-                : 
-                <></>
               }
-              {
-                config.card ? 
+              { 
                 <Link as={RouterLink} to='/cards' display="flex" algin="center">
                   <Text>Cartões</Text>
                 </Link>
-                : 
-                <></>
               }
-              {
-                config.plan ?
+              { 
                 <Link as={RouterLink} to='/plans' display="flex" algin="center">
                   <Text>Planos</Text>
                 </Link>
-                :
-                <></>
               }
               {
-                config.accounting ?
                 <Link as={RouterLink} to='/accounting' display="flex" algin="center">
                   <Text>Contabilidade</Text>
                 </Link>             
-                :
-                <></>
               }
             </HStack>
             <Link as={RouterLink} to='/config' display="flex" algin="center">
               <Flex align="center" mr="4">
                 <Box mr="4" textAlign="right" >
-                  <Text color="#E52A24">{user.username}</Text>
+                  <Text color="#2D2D2D">{user.username}</Text>
                   <Text color="#gray.500" fontSize="small" >{user.email}</Text>
                 </Box>
 
-                <Icon as={MdSettings} boxSize={6} color="#E52A24"/>
+                <Icon as={MdSettings} boxSize={6} color="#D8E800"/>
 
 
                 {/* <Avatar size="md" name={user.name} src="https://github.com/gustagpo.png" /> */}
               </Flex>
             </Link>
             <Link as={RouterLink} to='/login' display="flex" algin="center">
-                <Icon as={FiLogOut} boxSize={6} color="#E52A24"/>
+                <Icon as={FiLogOut} boxSize={6} color="#D8E800"/>
             </Link>
           </Flex>
 

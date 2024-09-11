@@ -80,7 +80,7 @@ export default function CardList({ jwt, user }) {
         <Flex display="flex" w='100%' flexDirection="column">
             <Box w='100%' mb={16} bg='gray.100' p='8'>
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Cartões Cadastrados</Heading>
+                    <Heading size='lg' color='#2D2D2D' fontWeight='normal'>Cartões Cadastrados</Heading>
                     <Flex align='end'>
                         <Flex direction='column' align='left' mr='4'>
                             <Text>Data de Inicio</Text>
@@ -94,7 +94,7 @@ export default function CardList({ jwt, user }) {
                             <Text>Filtrar por Conta</Text>
                             <Input borderColor='black' size='md' type='text' value={at} onChange={(e) => setAt(e.target.value)}/>
                         </Flex>
-                        <Button type='submit' onClick={handleAt} colorScheme='red'>Filtrar</Button>
+                        <Button type='submit' onClick={handleAt} backgroundColor='#D8E800'>Filtrar</Button>
                     </Flex>
 
                 </Flex>

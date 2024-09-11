@@ -50,7 +50,7 @@ export default function PartnerList({jwt, user}) {
         <AuthLayout>
             <Box w='100%' flex='1' borderRadius={8} bg='gray.100' p='8' flexDirection='column' mb='20'>
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Painel Contabil</Heading>
+                    <Heading size='lg' color='#2D2D2D' fontWeight='normal'>Painel Contabil</Heading>
                     <Flex align='end'>
                         <Flex direction='column' align='left' mr='4'>
                             <Text>Data de Inicio</Text>
@@ -60,7 +60,7 @@ export default function PartnerList({jwt, user}) {
                             <Text>Data Fim</Text>
                             <Input borderColor='black' size='md' type='date' min={startDate} value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
                         </Flex>                    
-                        <Button type='submit' onClick={handleAt} colorScheme='red'>Filtrar</Button>
+                        <Button type='submit' onClick={handleAt} backgroundColor='#D8E800'>Filtrar</Button>
                     </Flex>
                 </Flex>
 

@@ -81,7 +81,7 @@ export default function PartnerList({jwt, config}) {
         <AuthLayout>
             <Box w='100%' flex='1' borderRadius={8} bg='gray.100' p='8' flexDirection='column' mb='20'>
                 <Flex mb='8' justify='space-between' align='center'>
-                    <Heading size='lg' color='#E52A24' fontWeight='normal'>Usuários Cadastrados</Heading>
+                    <Heading size='lg' color='#2D2D2D' fontWeight='normal'>Usuários Cadastrados</Heading>
                     
                     {/* <Link as={RouterLink} to='/partners/create' display="flex" algin="center">
                         <Button
@@ -147,7 +147,7 @@ export default function PartnerList({jwt, config}) {
                                                     Editar
                                                 </Button>
                                             </Link> */}
-                                            { config.users_block ? (
+                                            { 
                                              e.status == true ? 
                                                  <Button                                            
                                                      size='sm'
@@ -168,9 +168,6 @@ export default function PartnerList({jwt, config}) {
                                                  >
                                                      Desbloquear
                                                  </Button> 
-                                             )                                       
-                                             : 
-                                             <></>
                                             }
 
                                             

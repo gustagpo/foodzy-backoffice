@@ -86,7 +86,7 @@ export default function AccountStatement({ jwt, user }) {
                         <Text>Data Fim</Text>
                         <Input borderColor='black' size='md' type='date' min={initDate} value={endDate} onChange={(e) => setEndDate(e.target.value)}/>
                     </Flex>
-                    <Button type='submit' onClick={handleDate} colorScheme='red'>Filtrar</Button>
+                    <Button type='submit' onClick={handleDate} backgroundColor='#D8E800'>Filtrar</Button>
                 </Flex>
                     
                 <Table colorScheme='gray.200'>
