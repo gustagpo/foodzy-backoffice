@@ -51,7 +51,7 @@ export default function Header2() {
               </Link>              
               <Flex alignItems="center">
                 <Text>Siga a Foodzy</Text>
-                <Link href="https://www.instagram.com/" target='blank' ml={2}>
+                <Link href="https://www.instagram.com/foodzy.com.br" target='blank' ml={2}>
                   <Flex bg="#D8E800" boxSize={10} borderRadius={50} alignItems="center" justifyContent="center">
                       <Icon as={BsInstagram} color="white" boxSize={6}/>
                   </Flex>
