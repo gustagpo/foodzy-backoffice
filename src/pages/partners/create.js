@@ -14,6 +14,8 @@ export default function CreatePartners({jwt, user}) {
   const [pixFee, setPixFee] = useState(0);
   const [receivePixFee, setReceivePixFee] = useState(0);
   const [minReceivePixFee, setMinReceivePixFee] = useState(0);
+  const [tevFee, setTevFee] = useState(0);
+  const [receiveTevFee, setReceiveTevFee] = useState(0);
   const [tedFee, setTedFee] = useState(0);
   const [boletoFee, setBoletoFee] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -35,6 +37,8 @@ export default function CreatePartners({jwt, user}) {
       min_receive_pix_fee: Number(minReceivePixFee),
       ted_fee: Number(tedFee),
       boleto_fee: Number(boletoFee),
+      tev_fee: Number(tevFee),
+      receive_tev_fee: Number(receiveTevFee),
     }
 
     console.log(body);
@@ -66,6 +70,8 @@ export default function CreatePartners({jwt, user}) {
         setMinReceivePixFee(0);
         setTedFee(0);
         setBoletoFee(0);
+        setTevFee(0);
+        setReceiveTevFee(0);
       }
 
       setLoading(false);
@@ -190,6 +196,46 @@ export default function CreatePartners({jwt, user}) {
                   </Box>
                   <Box mb='2'>
                     <Text htmlFor='name' mb='2'>
+                      Taxa de saída do TEV (reais)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setTevFee(valueString)}
+                      value={tevFee}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
+                      Taxa de entrada do TEV (%)
+                    </Text>
+                    <NumberInput
+                      onChange={(valueString) => setReceiveTevFee(valueString)}
+                      value={receiveTevFee}
+                      precision={2}
+                      borderColor='#20242D'
+                      borderRadius={5}
+                      _placeholder={{
+                          fontSize: '18',
+                          color: '#20242D'
+                      }}
+                    >
+                      <NumberInputField />                      
+                    </NumberInput>                                                     
+                  </Box>
+                </CardBody>                  
+              </VStack>             
+              <VStack>
+                <CardBody>
+                  <Box mb='2'>
+                    <Text htmlFor='name' mb='2'>
                       Taxa mínima de entrada do PIX (R$)
                     </Text>
                     <NumberInput
@@ -206,10 +252,6 @@ export default function CreatePartners({jwt, user}) {
                       <NumberInputField />                      
                     </NumberInput>                                                     
                   </Box>
-                </CardBody>                  
-              </VStack>             
-              <VStack>
-                <CardBody>
                   <Box mb='2'>
                     <Text htmlFor='name' mb='2'>
                       Taxa de entrada do PIX (%)
